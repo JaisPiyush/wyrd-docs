@@ -13,4 +13,10 @@ using TypeSpec.Rest;
   title: "Wyrd Internal API",
 })
 @server("https://example.com", "Single server endpoint")
-namespace WyrdAPI;
+namespace WyrdAPI {
+  @route("/account/auth")
+  namespace AccountAuthAPI {}
+
+  @route("/account")
+  namespace AccountAPI {}
+}

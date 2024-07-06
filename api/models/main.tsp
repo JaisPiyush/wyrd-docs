@@ -1,4 +1,3 @@
-namespace WyrdModels;
 
 /**
  * The DeviceCloudMessagingToken model stores the Firebase Cloud Messaging (FCM) 

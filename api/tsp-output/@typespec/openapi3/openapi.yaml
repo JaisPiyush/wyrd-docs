@@ -6,11 +6,11 @@ tags: []
 paths:
   /account/auth/login/phone:
     post:
-      operationId: login
+      operationId: AccountAuthAPI_login
       parameters: []
       responses:
-        "200":
-          description: The request has succeeded.
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
               schema:
@@ -20,26 +20,47 @@ paths:
                     type: string
                 required:
                   - token
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    enum:
+                      - verifyIdToken is invalid.
+                required:
+                  - message
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PhoneLoginBody"
+              $ref: '#/components/schemas/AccountAuthAPI.PhoneLoginBody'
   /account/device:
     post:
       operationId: DeviceCloudMessagingTokenAPIView_set
+      description: |-
+        Registers a new FCM token for the user. 
+        This token will be used to send push notifications to the user's device.
       parameters: []
       responses:
-        "201":
+        '201':
           description: The request has succeeded and a new resource has been created as a result.
           content:
             application/json:
               schema:
-                type: boolean
-        "400":
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+        '400':
           description: The server could not understand the request due to invalid syntax.
-        "401":
+        '401':
           description: Access is unauthorized.
           content:
             application/json:
@@ -62,22 +83,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/WyrdModels.SetDeviceCloudMessagingToken"
+              $ref: '#/components/schemas/SetDeviceCloudMessagingToken'
+      security:
+        - BearerAuth: []
+  /account/device/{pk}:
+    delete:
+      operationId: DeviceCloudMessagingTokenAPIView_delete
+      description: |-
+        Deletes the specified FCM token associated with the user. 
+        This stops the server from sending push notifications to 
+        the device associated with the deleted token.
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
 components:
   schemas:
-    PhoneLoginBody:
+    AccountAuthAPI.PhoneLoginBody:
       type: object
       required:
-        - phone_number
         - token
       properties:
-        phone_number:
-          type: string
         token:
           type: string
-    WyrdModels.DeviceCloudMessagingToken:
+          description: verifyIdToken provided by Firebase Phone Authentication. This token is used to retrieve the user's phone number.
+    DeviceCloudMessagingToken:
       type: object
       required:
         - user
@@ -96,8 +139,8 @@ components:
           format: date-time
           description: This field automatically records the timestamp whenever the token record is updated.
       allOf:
-        - $ref: "#/components/schemas/WyrdModels.SetDeviceCloudMessagingToken"
-    WyrdModels.SetDeviceCloudMessagingToken:
+        - $ref: '#/components/schemas/SetDeviceCloudMessagingToken'
+    SetDeviceCloudMessagingToken:
       type: object
       required:
         - token

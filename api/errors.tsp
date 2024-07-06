@@ -12,3 +12,10 @@ alias UnauthorizedUserError = {
         code: 401; 
     };
 };
+
+alias InvalidPhoneAuthenticationTokenError = {
+    @statusCode statusCode: 400;
+    @body error: {
+        message: "verifyIdToken is invalid."
+    };
+};
