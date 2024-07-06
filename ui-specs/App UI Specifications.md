@@ -35,11 +35,7 @@ Take inspiration from Hinge's dating preferences page.
 - **Age Range**: Slider-based age range selector (similar to Hinge's age range selector).
 - **Location**: User dating location selector (similar to Hinge's neighborhood selector).
 - **Minimum Height**: Set the minimum height required for the date.
-- **Interested Gender**: Gender the user wants to date.
-  - Male
-  - Female
-  - Transgender
-  - Both Male & Female
+- **Interested Gender**: Gender the user wants to date. Gender should be inclusive for catering LGBTQ+ community along with heterosexuals. Take inspiration from more in-depth gender selection in Gender identity in hinge. A user can select upto 3 genders.
 - **Dating Intentions**:
   - Short term
   - Long term
@@ -69,7 +65,8 @@ Take inspiration from Hinge's My Profile option.
 - **Edit Biography**
 - **Select Interested Tags**: Maximum 10 tags, inspired by Bumble.
 - **Add/Remove Prompts**: Inspired by Hinge. Prompts will be predefined, and the user will write answers for them.
-- **Select Pronouns, Gender, Sexuality, Interested Gender, Name, Age, Height, Location, Work, Job Title, College, Education Level, Religion, Hometown, Dating Intentions, and Other Dating Attributes**: Take inspiration from Hinge.
+- **Select attributes**: Select Pronouns, Gender, Sexuality, Interested Gender, Name, Age, Height, Location, Work, Job Title, College, Education Level, Religion, Hometown, Dating Intentions, and Other Dating Attributes, Take inspiration from Hinge.
+
 
 ### View Profile Screen (/account/profile)
 Hinge's profile is the ideal inspiration for design.
@@ -143,3 +140,31 @@ Icon to navigate to these screens.
 * /rooms/my
 * /chats
 * /account
+
+### Gender selection
+The dating app's gender selection process aims to be inclusive while maintaining a user-friendly interface. Genders are organized hierarchically under umbrella terms to avoid overwhelming users and to ensure a smooth experience for all, including heterosexual users and those uninterested in gender variations. Users can choose their own gender and the genders they are interested in, with options to expand their selections if desired.
+
+#### Own Gender Selection
+
+##### Default View:
+
+* Display three umbrella terms: Male, Female, Non-binary.
+* If any gender is selected from expanded view which is not in the three umbrella terms, then gender will be shown with selected highlight.
+* A single text button labeled "See All Genders" will be present, allowing users to view and select from all available genders.
+
+##### Expanded View:
+
+* Clicking "See All Genders" or an umbrella term will reveal a list of sub-genders under each term.
+* Users can select one gender from the expanded list.
+
+
+#### Interested Genders Selection
+##### Default View:
+
+* Display three default genders: Male, Female, Non-binary.
+* If any gender is selected from expanded view which is not in the three umbrella terms, then genders will be shown with selected highlight.
+* A text button labeled "See More Genders" will be present, allowing users to view and select from all available genders.
+##### Expanded View:
+
+* Clicking "See More Genders" or an umbrella term will reveal a list of sub-genders under each term.
+* Users can select up to three genders from the expanded list.
