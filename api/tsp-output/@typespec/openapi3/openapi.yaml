@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  title: Wyrd Internal API
+  version: 0.0.0
+tags: []
+paths:
+  /account/auth/login/phone:
+    post:
+      operationId: login
+      parameters: []
+      responses:
+        "200":
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PhoneLoginBody"
+  /account/device:
+    post:
+      operationId: DeviceCloudMessagingTokenAPIView_set
+      parameters: []
+      responses:
+        "201":
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                type: boolean
+        "400":
+          description: The server could not understand the request due to invalid syntax.
+        "401":
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    enum:
+                      - User is not authorized. Try logging again.
+                  code:
+                    type: number
+                    enum:
+                      - 401
+                required:
+                  - message
+                  - code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WyrdModels.SetDeviceCloudMessagingToken"
+      security:
+        - BearerAuth: []
+components:
+  schemas:
+    PhoneLoginBody:
+      type: object
+      required:
+        - phone_number
+        - token
+      properties:
+        phone_number:
+          type: string
+        token:
+          type: string
+    WyrdModels.DeviceCloudMessagingToken:
+      type: object
+      required:
+        - user
+        - created_at
+        - updated_at
+      properties:
+        user:
+          type: string
+          description: This field establishes a relationship with the User model, indicating which user the device token belongs to.
+        created_at:
+          type: string
+          format: date-time
+          description: This field automatically records the timestamp when the token record is created.
+        updated_at:
+          type: string
+          format: date-time
+          description: This field automatically records the timestamp whenever the token record is updated.
+      allOf:
+        - $ref: "#/components/schemas/WyrdModels.SetDeviceCloudMessagingToken"
+    WyrdModels.SetDeviceCloudMessagingToken:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+          description: This field stores the unique device token provided by FCM. It is used to identify the device to which notifications should be sent. This field is the primary key for this model, ensuring each token is unique.
+      description: |-
+        The DeviceCloudMessagingToken model stores the Firebase Cloud Messaging (FCM) 
+        device tokens of logged-in users. These tokens are essential for sending push 
+        notifications to the users' devices.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+servers:
+  - url: https://example.com
+    description: Single server endpoint
+    variables: {}

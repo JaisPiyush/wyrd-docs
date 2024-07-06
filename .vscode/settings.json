@@ -1,0 +1,10 @@
+{
+    "cSpell.words": [
+        "openapi",
+        "Wyrd"
+    ],
+    "yaml.schemas": {
+        "openapi:v3": "file:///home/jarden/wyrd-docs/api-specs/api.yaml"
+    },
+    "typespec.tsp-server.path": "${workspaceFolder}/api/node_modules/@typespec/compiler"
+}
