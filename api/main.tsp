@@ -19,4 +19,7 @@ namespace WyrdAPI {
 
   @route("/account")
   namespace AccountAPI {}
+
+  @route("/superuser")
+  namespace SuperUserAPI {}
 }

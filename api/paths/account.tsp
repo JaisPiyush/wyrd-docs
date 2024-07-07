@@ -10,6 +10,10 @@ using TypeSpec.Rest;
 
 namespace WyrdAPI.AccountAPI;
 
+@withVisibility("create", "update")
+model SetDeviceCloudMessagingToken {
+    ...DeviceCloudMessagingToken
+}
 
 @route("/device")
 @useAuth(BearerAuth)
@@ -37,4 +41,19 @@ interface DeviceCloudMessagingTokenAPIView {
      */
     @delete op delete is DeleteResourceById;
 
+}
+
+@route("/")
+@useAuth(BearerAuth)
+interface DatingAccountAPIView {
+    @doc("Fetch user's account detail.")
+    op list(): {
+        @body data: ReadableDatingAccount;
+        @statusCode statusCode: 200;
+    } | {@statusCode statusCode: 404 | 401;};
+
+    op read(@path pk: string): {
+        @body data: ReadableDatingAccount;
+        @statusCode statusCode: 200;
+    };
 }
