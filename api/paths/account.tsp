@@ -43,6 +43,15 @@ interface DeviceCloudMessagingTokenAPIView {
 
 }
 
+@route("/user/me/")
+@useAuth(BearerAuth)
+@get op me(): {
+    @statusCode statusCode: 200;
+    @body data: User
+} | {
+    @statusCode statusCode: 400 | 401;
+};
+
 @route("/")
 @useAuth(BearerAuth)
 interface DatingAccountAPIView {

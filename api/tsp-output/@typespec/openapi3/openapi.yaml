@@ -34,10 +34,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  token:
+                  access:
+                    type: string
+                  refresh:
                     type: string
                 required:
-                  - token
+                  - access
+                  - refresh
         '400':
           description: The server could not understand the request due to invalid syntax.
           content:
@@ -57,6 +60,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AccountAuthAPI.PhoneLoginBody'
+  /account/auth/token/refresh:
+    post:
+      operationId: AccountAuthAPI_refresh
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access:
+                    type: string
+                required:
+                  - access
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh:
+                  type: string
+              required:
+                - refresh
+      security:
+        - BearerAuth: []
   /account/device:
     post:
       operationId: DeviceCloudMessagingTokenAPIView_set
@@ -195,6 +231,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReadableInterestTag'
+        '404':
+          description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
     delete:
@@ -294,8 +332,6 @@ components:
         - is_active
         - is_premium
         - is_in_relationship
-        - search_range
-        - age_range
       properties:
         account:
           type: string
@@ -339,12 +375,18 @@ components:
           default: false
         avatar:
           type: string
+          nullable: true
+          default: null
         current_place:
           type: string
+          nullable: true
           description: The current place name of the account holder.
+          default: null
         hometown:
           type: string
+          nullable: true
           description: The hometown of the account holder.
+          default: null
         height:
           type: number
           nullable: true

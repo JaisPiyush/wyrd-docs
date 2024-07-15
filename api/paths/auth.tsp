@@ -13,10 +13,26 @@ model PhoneLoginBody {
     token: string;
 }
 
-@route("/login/phone")
+@route("/login/phone/")
 @post op login(@body data: PhoneLoginBody): {
     @body data: {
-        token: string;
+        access: string;
+        refresh: string;
     };
     @statusCode statusCode: 201;
 }| InvalidPhoneAuthenticationTokenError;
+
+@route("/token/refresh/")
+@useAuth(BearerAuth)
+@post op refresh(
+    @body data: {
+        refresh: string
+    }
+) : {
+    @body data: {
+        access: string;
+    },
+    @statusCode statusCode: 200;
+} | {
+    @statusCode statusCode: 401 | 400;
+};

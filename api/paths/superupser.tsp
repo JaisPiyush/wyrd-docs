@@ -8,7 +8,7 @@ using TypeSpec.Rest;
 
 namespace WyrdAPI.SuperUserAPI;
 
-@route("/interest-tag")
+@route("/interest-tag/")
 @useAuth(BearerAuth)
 interface InterestTagAPIView {
     op list(): ReadableInterestTag[];

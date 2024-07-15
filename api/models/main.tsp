@@ -1,4 +1,10 @@
 
+model User {
+    username: string;
+    email?: string;
+}
+
+
 /**
  * The DeviceCloudMessagingToken model stores the Firebase Cloud Messaging (FCM) 
  * device tokens of logged-in users. These tokens are essential for sending push 
@@ -205,7 +211,7 @@ model DatingAccount {
     @visibility("hidden")
     @maxItems(768)
     @minItems(768)
-    embedding_bio?: float[] | null = null;
+    embedding_bio?: float[];
     
 
 }
