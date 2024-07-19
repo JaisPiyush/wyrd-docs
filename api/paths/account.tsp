@@ -52,6 +52,8 @@ interface DeviceCloudMessagingTokenAPIView {
     @statusCode statusCode: 400 | 401;
 };
 
+
+
 @route("/")
 @useAuth(BearerAuth)
 interface DatingAccountAPIView {
@@ -65,4 +67,10 @@ interface DatingAccountAPIView {
         @body data: ReadableDatingAccount;
         @statusCode statusCode: 200;
     };
+
+    op create(@body data: CreateDatingAccount) : {
+        @body data: ReadableDatingAccount;
+        @statusCode statusCode: 201;
+    } | {@statusCode statusCode: 400 | 401;};
 }
+

@@ -132,14 +132,12 @@ model Point {
 
 
 model AgeRange {
-    lower: int8;
-    upper: int8;
+    lower: plainDate;
+    upper: plainDate;
 }
 
-const defaultAgeRange: AgeRange = #{
-    lower: 19,
-    upper: 28
-};
+
+
 
 model DatingAccount {
     @visibility("read")
@@ -151,7 +149,7 @@ model DatingAccount {
     name: string;
 
     @visibility("read", "create", "update")
-    birth_date: plainDate;
+    dob: plainDate;
 
     @visibility("read", "create", "update")
     @doc("A brief biography of the account holder.")
@@ -164,6 +162,9 @@ model DatingAccount {
     @visibility("read", "create", "update")
     @doc("The gender that the account holder is interested in.")
     gender: Gender;
+
+    @visibility("read", "create", "update")
+    sub_gender?: Gender;
 
     @visibility("read", "create", "update")
     @doc("The gender that the account holder is interested in. User can select upto 3 genders.")
@@ -192,6 +193,14 @@ model DatingAccount {
     @doc("The current place name of the account holder.")
     current_place?: string| null = null;
 
+    @visibility("read")
+    @doc("Current number of simultaneous matches. These matches exclude dating room matches.")
+    current_matches: int8;
+
+    @visibility("read")
+    @doc("Number of current active chats")
+    current_active_chats: int8;
+
     @visibility("read",  "update")
     @doc("The hometown of the account holder.")
     hometown?: string| null = null;
@@ -218,5 +227,10 @@ model DatingAccount {
 
 @withVisibility("read")
 model ReadableDatingAccount {
+    ...DatingAccount
+}
+
+@withVisibility("create")
+model CreateDatingAccount {
     ...DatingAccount
 }

@@ -22,6 +22,28 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
+    post:
+      operationId: DatingAccountAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadableDatingAccount'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatingAccount'
+      security:
+        - BearerAuth: []
   /account/auth/login/phone:
     post:
       operationId: AccountAuthAPI_login
@@ -164,6 +186,23 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
+  /account/user/me:
+    get:
+      operationId: AccountAPI_me
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
   /account/{pk}:
     get:
       operationId: DatingAccountAPIView_read
@@ -273,11 +312,46 @@ components:
         - upper
       properties:
         lower:
-          type: integer
-          format: int8
+          type: string
+          format: date
         upper:
-          type: integer
-          format: int8
+          type: string
+          format: date
+    CreateDatingAccount:
+      type: object
+      required:
+        - name
+        - dob
+        - bio
+        - interest_tags
+        - gender
+        - interested_genders
+      properties:
+        name:
+          type: string
+          description: The name of the account holder.
+        dob:
+          type: string
+          format: date
+        bio:
+          type: string
+          description: A brief biography of the account holder.
+        interest_tags:
+          type: array
+          items:
+            type: string
+          description: The interest tags associated with the account.
+        gender:
+          allOf:
+            - $ref: '#/components/schemas/Gender'
+          description: The gender that the account holder is interested in.
+        sub_gender:
+          $ref: '#/components/schemas/Gender'
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gender'
+          description: The gender that the account holder is interested in. User can select upto 3 genders.
     CreateInterestTag:
       type: object
       required:
@@ -324,7 +398,7 @@ components:
       required:
         - account
         - name
-        - birth_date
+        - dob
         - bio
         - interest_tags
         - gender
@@ -332,6 +406,8 @@ components:
         - is_active
         - is_premium
         - is_in_relationship
+        - current_matches
+        - current_active_chats
       properties:
         account:
           type: string
@@ -339,7 +415,7 @@ components:
         name:
           type: string
           description: The name of the account holder.
-        birth_date:
+        dob:
           type: string
           format: date
         bio:
@@ -354,6 +430,8 @@ components:
           allOf:
             - $ref: '#/components/schemas/Gender'
           description: The gender that the account holder is interested in.
+        sub_gender:
+          $ref: '#/components/schemas/Gender'
         interested_genders:
           type: array
           items:
@@ -382,6 +460,14 @@ components:
           nullable: true
           description: The current place name of the account holder.
           default: null
+        current_matches:
+          type: integer
+          format: int8
+          description: Current number of simultaneous matches. These matches exclude dating room matches.
+        current_active_chats:
+          type: integer
+          format: int8
+          description: Number of current active chats
         hometown:
           type: string
           nullable: true
@@ -415,6 +501,15 @@ components:
           nullable: true
           description: A URL pointing to an icon that visually represents the interest tag.
           default: null
+    User:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+        email:
+          type: string
   securitySchemes:
     BearerAuth:
       type: http
