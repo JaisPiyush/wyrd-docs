@@ -36,3 +36,10 @@ model PhoneLoginBody {
 } | {
     @statusCode statusCode: 401 | 400;
 };
+
+@route("/logout")
+@useAuth(BearerAuth)
+@doc("logout user in backend and remove device token")
+@delete op logout(): {
+    @statusCode status: 201 | 400;
+};

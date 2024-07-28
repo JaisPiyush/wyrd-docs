@@ -10,67 +10,47 @@ using TypeSpec.Rest;
 
 namespace WyrdAPI.AccountAPI;
 
-@withVisibility("create", "update")
-model SetDeviceCloudMessagingToken {
-    ...DeviceCloudMessagingToken
-}
-
-@route("/device")
+@route("/interest-tags")
 @useAuth(BearerAuth)
-interface DeviceCloudMessagingTokenAPIView {
-    /**
-     * Registers a new FCM token for the user. 
-     * This token will be used to send push notifications to the user's device.
-     * 
-     */
-    @post op set(@body token: SetDeviceCloudMessagingToken): {
-        @body success: {
-            success: boolean;
-        };
-        @statusCode statusCode: 201
-    } | {
-        @statusCode statusCode: 400
-    } | UnauthorizedUserError;
-
-    /**
-     * 
-     * Deletes the specified FCM token associated with the user. 
-     * This stops the server from sending push notifications to 
-     * the device associated with the deleted token.
-     * 
-     */
-    @delete op delete is DeleteResourceById;
-
-}
-
-@route("/user/me/")
-@useAuth(BearerAuth)
-@get op me(): {
+@get op list(): {
+    @body tags: ReadableInterestTag[];
     @statusCode statusCode: 200;
-    @body data: User
 } | {
-    @statusCode statusCode: 400 | 401;
+    @statusCode statusCode: 401 | 500;
+};
+
+@route("/device/token")
+@doc("set FCM device token for notification")
+@useAuth(BearerAuth)
+@post op set(@body data: SetDeviceCloudMessagingTokenModel): {
+    @statusCode status: 201 | 401 | 400;
 };
 
 
-
-@route("/")
+@route("/me")
 @useAuth(BearerAuth)
-interface DatingAccountAPIView {
-    @doc("Fetch user's account detail.")
-    op list(): {
-        @body data: ReadableDatingAccount;
-        @statusCode statusCode: 200;
-    } | {@statusCode statusCode: 404 | 401;};
+@get op read(): {
+    @body user: User;
+    @statusCode status: 200;
+} | {@statusCode status: 401 | 400;};
 
-    op read(@path pk: string): {
-        @body data: ReadableDatingAccount;
-        @statusCode statusCode: 200;
+@route("/dating/profile")
+@useAuth(BearerAuth)
+interface DatingProfileAPI {
+    @post op create(@body profile: CreateDatingProfile): {
+        @body profile: ReadableDatingProfile;
+        @statusCode status: 201;
+    } | {
+        @statusCode status: 401 | 400;
     };
 
-    op create(@body data: CreateDatingAccount) : {
-        @body data: ReadableDatingAccount;
-        @statusCode statusCode: 201;
-    } | {@statusCode statusCode: 400 | 401;};
-}
+    @get op read(): ReadableDatingProfile;
 
+    @put op update(@body data: UpdateDatingProfileModel | SetDatingPreferencesModel): {
+        @statusCode status: 201;
+        @body profile: ReadableDatingProfile;
+    } | {
+        @statusCode status: 401 | 400;
+    };
+
+}
