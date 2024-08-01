@@ -77,7 +77,7 @@ The primary objective of this document is to develop a flutter dating app that a
    - onNextCallBack: ''
    - onRejectCallBack:''
 
-2. ### accountSetupPage1
+2. ### enterBasicDetails
 
    <!-- #### accountSetupPage1 -->
 
@@ -85,13 +85,31 @@ The primary objective of this document is to develop a flutter dating app that a
 
    -Routing
 
-   - Route:'/accountSetupPage1'
+   - Route:'/enterBasicDetails'
    - navigate to:'/accountSetupPage2'
 
    -Actions
 
    - Enter name in Textfield and date of birth
    - Storing the State of the Textfield(Persistent).
+
+3. ### selectGender
+
+   <!-- #### accountSetupPage1 -->
+
+   allow user to select gender in details.
+
+   -Routing
+
+   - Route:'/gender'
+   - navigate to:'/genderConfirmation'
+   - onPop:'/enterPBasicDetails'
+
+   -Actions
+
+   - Choose Gender From given options(Men,women,other).
+   - After Selection, allow user to Select Gender in detail.
+   - open a bottom-sheet Displaying Details of particular Gender.
 
 ## Widgets
 
@@ -120,8 +138,8 @@ The primary objective of this document is to develop a flutter dating app that a
 
    -States
 
-   - AccountSetupPage1BlocSuccess: State for account saving details succesfullt.
-   - AccountSetupPage1Blocfailure: State for Failed cases(Internet Connection issues).
+   - AccountSetupPage1BlocSuccess: State for account saving details successfully.
+   - AccountSetupPage1BlocFailure: State for Failed cases(Internet Connection issues ,etc.).
 
 ### FirebasePhoneAuthenticationModule
 
