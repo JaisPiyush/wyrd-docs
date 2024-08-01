@@ -1,9 +1,11 @@
 # Flutter App Design Documentation
 
 ## Introduction
+
 This project is flutter based mobile application of dating app. The app features a clean UI and leverages the Bloc pattern for state management to ensure scalable and maintainable codebase.
 
 The main highlight of the design documentation are:
+
 1. Code should follow separation of concern strategy.
 2. External services like firebase should not directly be inducted in service, rather it should use adapter pattern.
 3. Code should follow Flutter [coding style guide](https://dart.dev/effective-dart/style).
@@ -11,7 +13,9 @@ The main highlight of the design documentation are:
 5. Data source and repository should be separate. No repository should make direct network or db requests.
 
 ## Objectives
+
 The primary objective of this document is to develop a flutter dating app that allows users to:
+
 - Find a live date.
 - Find dating rooms.
 - Join dating rooms and find matches.
@@ -20,60 +24,83 @@ The primary objective of this document is to develop a flutter dating app that a
 ## Features
 
 1. ### User Authentication
-    - login using phone number
+   - login using phone number
 2. ### Find match
-    - create/edit dating profile
-    - view number of matches left and matching quota.
-    - info button to now details about matches left, matching quota and cool down period.
-    - set dating preferences
-    - find matches
+   - create/edit dating profile
+   - view number of matches left and matching quota.
+   - info button to now details about matches left, matching quota and cool down period.
+   - set dating preferences
+   - find matches
 3. ### Dating rooms
-    - find dating rooms based on
-        - location (dating rooms can be location restrictive or open to all)
-        - start and end date (dating room can have not defined end date)
-        - by QR code or room id.
-    - join dating rooms: dating rooms can be either public or private, only public dating rooms can be searched, private rooms can only be joined by joining code.
-        - join by scanning a qr code: User will redirect to dating room and can join the room without entering joining code by clicking join button.
-        - join by entering joining code: User will enter joining code.
-    - view all the joined dating rooms which are active.
+   - find dating rooms based on
+     - location (dating rooms can be location restrictive or open to all)
+     - start and end date (dating room can have not defined end date)
+     - by QR code or room id.
+   - join dating rooms: dating rooms can be either public or private, only public dating rooms can be searched, private rooms can only be joined by joining code.
+     - join by scanning a qr code: User will redirect to dating room and can join the room without entering joining code by clicking join button.
+     - join by entering joining code: User will enter joining code.
+   - view all the joined dating rooms which are active.
 4. ### Dating room
-    - view dating room details if not joined.
-    - dating room matching page if joined the room.
-    - button to view dating room details if joined the room.
-    - button to share, leave the dating room.
+   - view dating room details if not joined.
+   - dating room matching page if joined the room.
+   - button to view dating room details if joined the room.
+   - button to share, leave the dating room.
 5. ### Profile
-    - view/edit current profile.
-    - Help center and tips for using app.
+   - view/edit current profile.
+   - Help center and tips for using app.
 6. ### Settings
-    - logout
-    - view app version
-    - block list
-    - phone number
-    - legals
+   - logout
+   - view app version
+   - block list
+   - phone number
+   - legals
 7. ### Block list
-    - view blocked numbers
-    - add/ remove number from block list
+   - view blocked numbers
+   - add/ remove number from block list
 8. ### Chats
-    - view open chats (matched pairs).
-    - leave chat and end match pair.
-    - convert chat to relationship.
-    - expose profile & view matches profile.
-        
+   - view open chats (matched pairs).
+   - leave chat and end match pair.
+   - convert chat to relationship.
+   - expose profile & view matches profile.
 
 ## Activities
 
 ## Pages
 
+1. ### locationPermission
+
+   Requests Permissions for location access for matching algorithm.
+
+   -Routing
+
+   - Route: '/locationPermission'
+   - onNextCallBack: ''
+   - onRejectCallBack:''
+
 ## Widgets
 
 ## Modules
 
+## blocs
+
+1. ### LocationPermissionBloc
+
+   -Events
+
+   - RequestLocationPermission: Request Location Access
+
+   -States
+
+   - LocationPermissionGranted: State when permission is Granted.
+   - LocationPermissionDenied: State when Permission is Denied.
+
 ### FirebasePhoneAuthenticationModule
+
 ```dart
 class FirebasePhoneAuthenticationModule {
     // Retrieve [FirebaseUser] from [PhoneAuthCredential]
     FirebaseUser phoneAuthCredentialToFirebaseUser(PhoneAuthCredential credential);
-    
+
 
     // Method for phone number authentication. The method also supports automatic code retrieval and authentication.
     Future<void> verifyPhoneNumber({
@@ -90,7 +117,7 @@ class FirebasePhoneAuthenticationModule {
 
     // Manually singIn with phone number and sms code.
     Future<T> signInWithPhoneNumber<T>(
-        String verificationId, 
+        String verificationId,
         String smsCode,
         // Authenticate the user on backend.
         // If the callback is not provided, the functional will only sign in with phone number authentication service.
@@ -115,6 +142,7 @@ class FirebasePhoneAuthenticationModule {
 |'invalid-phone-number'| Phone number was incorrect|
 
 ### AuthenticationAPIModule
+
 ```dart
 class AuthenticationAPIModule {
     // login wyrd backend using [FirebaseUser]
@@ -135,17 +163,17 @@ class AuthenticationAPIModule {
 
 ```dart
 class AuthenticationRepository {
-    
+
     /*
     * Return logged in [User] model.
-    * 
+    *
     * Get [FirebaseUser] via `Firebase.instance.currentUser`
     * If jwt doesn't exists, then call @method loginWithFirebaseUser
     * Fetch current user from backend
-    * 
+    *
     * Errors:
     *   - firebase user is not logged in
-    *   - login error from backend 
+    *   - login error from backend
     *   - unauthorized server request to backend (401)
     *
     */
@@ -159,12 +187,12 @@ class AuthenticationRepository {
 }
 ```
 
-
 ## Models
 
 ## Appendix
 
 ### Packages
+
 - easy_loading_button
 - pinput: OTP input
 - tutorial_coach_mark
