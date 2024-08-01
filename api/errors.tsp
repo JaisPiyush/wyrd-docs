@@ -8,14 +8,22 @@ using TypeSpec.Rest;
 alias UnauthorizedUserError = {
     @statusCode statusCode: 401;
     @body error: {
-        message: "User is not authorized. Try logging again.";
-        code: 401; 
+        detail: "User is not authorized. Try logging again.";
     };
 };
 
+
 alias InvalidPhoneAuthenticationTokenError = {
-    @statusCode statusCode: 400;
-    @body error: {
-        message: "verifyIdToken is invalid."
-    };
+        @statusCode code: 400;
+        @body error: {
+            detail: "verifyIdToken is invalid."
+    };  
 };
+
+// alias ResourceNotFoundError<M extends valueof string | void > = {
+//     @statusCode code: 404;
+//     @body error: {
+//         detail: typeof M
+//     }
+// };
+

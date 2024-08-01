@@ -20,7 +20,8 @@ model PhoneLoginBody {
         refresh: string;
     };
     @statusCode statusCode: 201;
-}| InvalidPhoneAuthenticationTokenError;
+}| InvalidPhoneAuthenticationTokenError | NotFoundResponse;
+
 
 @route("/token/refresh/")
 @useAuth(BearerAuth)
@@ -28,14 +29,7 @@ model PhoneLoginBody {
     @body data: {
         refresh: string
     }
-) : {
-    @body data: {
-        access: string;
-    },
-    @statusCode statusCode: 200;
-} | {
-    @statusCode statusCode: 401 | 400;
-};
+) : WriteSuccessfullResponse<{token: string}> | BadRequestResponse;
 
 @route("/logout")
 @useAuth(BearerAuth)

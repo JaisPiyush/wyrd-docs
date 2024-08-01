@@ -7,6 +7,23 @@ import "@typespec/openapi3";
 using TypeSpec.Http;
 using TypeSpec.Rest;
 
-op DeleteResourceById(@path pk: string): {
-    @statusCode statusCode: 200 | 404 | 401 | 400;
+model WriteSuccessfullResponse<T> {
+    @statusCode code: 201;
+    @body body: T;
 };
+
+model ReadResponse<T> {
+    @statusCode code: 200;
+    @body body: T;
+};
+
+alias ViewsetAuthorizedViewAPIErrors = UnauthorizedResponse | BadRequestResponse;
+alias ViewsetAuthorizedDetailViewAPIErrors = ViewsetAuthorizedViewAPIErrors | NotFoundResponse;
+
+@delete op DeleteResourceById<P extends string | integer, T>(@path pk: P): WriteSuccessfullResponse<void> | ViewsetAuthorizedDetailViewAPIErrors;
+
+@get op ReadResourceById<P extends string | integer, T>(@path pk: P): ReadResponse<T> | ViewsetAuthorizedDetailViewAPIErrors;
+@get op ListResources<T>(): ReadResponse<T> | ViewsetAuthorizedViewAPIErrors;
+
+@post op create<C, R>(@body body: C): WriteSuccessfullResponse<R> | ViewsetAuthorizedViewAPIErrors;
+@put op update<C, R>(@body body: C): WriteSuccessfullResponse<R> | ViewsetAuthorizedDetailViewAPIErrors;
