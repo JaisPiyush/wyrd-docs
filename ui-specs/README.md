@@ -77,6 +77,22 @@ The primary objective of this document is to develop a flutter dating app that a
    - onNextCallBack: ''
    - onRejectCallBack:''
 
+2. ### accountSetupPage1
+
+   <!-- #### accountSetupPage1 -->
+
+   Enter User basic details such as name and date of birth
+
+   -Routing
+
+   - Route:'/accountSetupPage1'
+   - navigate to:'/accountSetupPage2'
+
+   -Actions
+
+   - Enter name in Textfield and date of birth
+   - Storing the State of the Textfield(Persistent).
+
 ## Widgets
 
 ## Modules
@@ -93,6 +109,19 @@ The primary objective of this document is to develop a flutter dating app that a
 
    - LocationPermissionGranted: State when permission is Granted.
    - LocationPermissionDenied: State when Permission is Denied.
+
+2. ### AccountSetupPage1Bloc
+
+   -Events
+
+   - EventName: Event to capture Profile Name
+   - EnterDOB: Event to capture DOB
+   - SaveDetails: Event to Save the State in Datatype- Profile.
+
+   -States
+
+   - AccountSetupPage1BlocSuccess: State for account saving details succesfullt.
+   - AccountSetupPage1Blocfailure: State for Failed cases(Internet Connection issues).
 
 ### FirebasePhoneAuthenticationModule
 
