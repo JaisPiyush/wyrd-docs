@@ -30,14 +30,20 @@ interface DatingRoomAPIView {
 
 @route("/pool")
 interface MatchingPoolAPIView {
-    op list is ListResources<ReadMatchingPool<"rp">>;
-    op read is ReadResourceById<int64, ReadMatchingPool<"dr">>;
+    // @doc("Returns the find the matching pool instance data. Returns empty array if profile in not in matching pool.")
+    // op list is ListResources<ReadMatchingPool<"rp">[]>;
+    // @doc("Returns dating room matching pool instance. Throws 404 if profile is not present in the matching pool.")
+    // op read is ReadResourceById<int64, ReadMatchingPool<"dr">>;
     
+    @doc("join the matching pool. User can select matching pool of dating room, otherwise they will join common pool. It will return 400 on duplicate entry.")
     @post op join(@body dating_room?: int64): WriteDetailResourceResponse<ReadMatchingPool>;
+    
+    @doc("leave the matching pool.")
     @delete op leave(@body dating_room?: int64): {@statusCode code: 201} | ViewsetAuthorizedDetailViewAPIErrors;
 
     @route("/room/{roomId}")
-    @get getMatchingProfiles(): ListResourcesResponse<ExposedReadDatingProfile[]>;
+    @doc("get all the matching profiles in a dating room.")
+    @get getMatchingProfiles(@path roomId: string): ListResourcesResponse<ExposedReadDatingProfile[]>;
 }
 
 @route("/pair")

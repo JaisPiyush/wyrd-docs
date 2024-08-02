@@ -555,7 +555,8 @@ model DatingRoom {
     @visibility("detail_read")
     owner: ReadDatingRoomOrganizer;
 
-    @visibility("read", "update", "search_param")
+    @visibility("read", "search_param")
+    @doc("room is available for joining")
     is_active: boolean;
 
     @visibility("read", "create", "update")
@@ -650,6 +651,23 @@ model UpdateDatingRoom {
     ...DatingRoom
 }
 
+
+model DatingRoomParticipantsStats {
+    start_date: plainDate;
+    end_date?: plainDate;
+    total_participants: int64;
+    male_participants: int64;
+    female_participants: int64;
+    other_participants: int64;
+    age_stats: {
+        age_19_24: int64;
+        age_25_34: int64;
+        age_35_44: int64;
+        age_45_: int64;
+    }
+}
+
+
 model MatchingPool<T extends "rp" | "dr" = "rp"> {
     @visibility("read", "create")
     profile: string;
@@ -674,6 +692,15 @@ model CreateMatchingPool<T extends "rp" | "dr" = "rp"> {
     ...MatchingPool<T>
 }
 
+@withVisibility("read")
+@doc("Matching pool store temporary data. Archive stores data of Matching Pools for later analysis.")
+model ArchivedMatchingPool {
+    ...MatchingPool,
+
+    @visibility("read")
+    @key id: int64;
+}
+
 model MatchingPairDatingProfileInfo {
     avatar: string;
     name: string;
@@ -690,6 +717,8 @@ model MatchingPair {
     profile_2: MatchingPairDatingProfileInfo;
 
     dating_room?: int64;
+
+    archive_matching_pool_id: int64;
 
     is_profile_1_exposed: boolean = false;
     is_profile_2_exposed: boolean = false;

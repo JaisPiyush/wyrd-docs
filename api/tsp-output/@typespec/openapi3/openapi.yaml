@@ -516,6 +516,7 @@ paths:
   /account/profile/{pk}:
     get:
       operationId: DatingProfileAPIView_read
+      description: Based on whether the requested profile is exposed or not, Exposed or UnExposed dating profile will be returned.
       parameters:
         - name: pk
           in: path
@@ -528,7 +529,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReadDatingProfile'
+                anyOf:
+                  - $ref: '#/components/schemas/UnExposedReadDatingProfile'
+                  - $ref: '#/components/schemas/ExposedReadDatingProfile'
         '400':
           description: The server could not understand the request due to invalid syntax.
         '401':
@@ -622,33 +625,54 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
-  /match/dating_room/{roomId}/join:
-    post:
-      operationId: DatingRoomAPIView_join
-      parameters:
-        - name: roomId
-          in: path
-          required: true
-          schema:
-            type: string
+  /match/pair:
+    get:
+      operationId: MatchingPairAPIView_list
+      parameters: []
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '200':
+          description: The request has succeeded.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReadDatingRoom'
+                type: array
+                items:
+                  $ref: '#/components/schemas/MatchingPair'
         '400':
           description: The server could not understand the request due to invalid syntax.
         '401':
           description: Access is unauthorized.
       security:
         - BearerAuth: []
-  /match/dating_room/{roomId}/leave:
-    delete:
-      operationId: DatingRoomAPIView_leave
+  /match/pair/get-chat-token:
+    get:
+      operationId: MatchingPairAPIView_getChatToken
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+  /match/pair/{id}/activity:
+    post:
+      operationId: MatchingPairProfileAcitivityAPIView_create
       parameters:
-        - name: roomId
+        - name: id
           in: path
           required: true
           schema:
@@ -659,7 +683,106 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReadDatingProfile'
+                $ref: '#/components/schemas/ReadMatchingPairProfileActivity'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMatchingPairProfileActivity'
+      security:
+        - BearerAuth: []
+  /match/pool:
+    post:
+      operationId: MatchingPoolAPIView_join
+      description: join the matching pool. User can select matching pool of dating room, otherwise they will join common pool. It will return 400 on duplicate entry.
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - profile
+                  - pairing_type
+                  - created_at
+                properties:
+                  profile:
+                    type: string
+                  dating_room:
+                    type: integer
+                    format: int64
+                  pairing_type:
+                    type: string
+                    enum:
+                      - rp
+                  created_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int64
+      security:
+        - BearerAuth: []
+    delete:
+      operationId: MatchingPoolAPIView_leave
+      description: leave the matching pool.
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int64
+      security:
+        - BearerAuth: []
+  /match/pool/room/{roomId}:
+    get:
+      operationId: MatchingPoolAPIView_getMatchingProfiles
+      description: get all the matching profiles in a dating room.
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExposedReadDatingProfile'
         '400':
           description: The server could not understand the request due to invalid syntax.
         '401':
@@ -1222,6 +1345,15 @@ components:
           type: string
         category:
           type: string
+    CreateMatchingPairProfileActivity:
+      type: object
+      required:
+        - activity
+      properties:
+        activity:
+          allOf:
+            - $ref: '#/components/schemas/MatchingPairProfileActivityType'
+          description: AcceptRelationship will set a schedule task to auto-delete pair if response was not provided.
     CreateTextPrompt:
       type: object
       required:
@@ -1367,6 +1499,7 @@ components:
           $ref: '#/components/schemas/ReadDatingRoomOrganizer'
         is_active:
           type: boolean
+          description: room is available for joining
         search_distance_range:
           type: integer
           format: int32
@@ -1424,6 +1557,148 @@ components:
         is_participant:
           type: boolean
           default: false
+    ExposedReadDatingProfile:
+      type: object
+      required:
+        - user
+        - name
+        - dob
+        - gender
+        - show_subgender_on_profile
+        - dating_intention
+        - interest_tags
+        - medias
+        - audios
+        - prompts
+        - location
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        name:
+          type: string
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/Gender'
+        bio:
+          type: string
+        subgender:
+          anyOf:
+            - $ref: '#/components/schemas/SubGendersInFemale'
+            - $ref: '#/components/schemas/SubGendersInNonBinary'
+            - $ref: '#/components/schemas/SubGendersInMale'
+        show_subgender_on_profile:
+          type: boolean
+          default: false
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntention'
+        interest_tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadInterestTag'
+          minItems: 5
+          maxItems: 8
+        medias:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - content_type
+              - url
+              - is_profile_picture
+              - position
+            properties:
+              id:
+                type: integer
+                format: int32
+              content_type:
+                anyOf:
+                  - type: string
+                    enum:
+                      - image
+                  - type: string
+                    enum:
+                      - video
+              url:
+                type: string
+              caption:
+                type: string
+              is_profile_picture:
+                type: boolean
+                default: false
+              position:
+                type: integer
+                format: int8
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+          minItems: 1
+          maxItems: 6
+        audios:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - content_type
+              - url
+              - is_profile_picture
+              - position
+            properties:
+              id:
+                type: integer
+                format: int32
+              content_type:
+                type: string
+                enum:
+                  - audio
+              url:
+                type: string
+              caption:
+                type: string
+              is_profile_picture:
+                type: boolean
+                default: false
+              position:
+                type: integer
+                format: int8
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+          maxItems: 2
+        prompts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadDatingProfileTextPrompt'
+          maxItems: 3
+        sexuality:
+          $ref: '#/components/schemas/Sexuality'
+        location:
+          type: string
+          description: Locality name
+        work:
+          type: string
+        job_title:
+          type: string
+        college:
+          type: string
+        education_level:
+          type: string
+          enum:
+            - Secondary School
+            - Undergrad
+            - Postgrad
+            - Prefer not to say
+        hometown:
+          type: string
     Gender:
       type: string
       enum:
@@ -1468,6 +1743,88 @@ components:
             y:
               type: number
               format: float
+    MatchingPair:
+      type: object
+      required:
+        - id
+        - pairing_type
+        - profile_1
+        - profile_2
+        - archive_matching_pool_id
+        - is_profile_1_exposed
+        - is_profile_2_exposed
+        - is_active
+        - has_established_connection
+        - is_in_relationship
+        - is_frozen
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+        pairing_type:
+          type: string
+          enum:
+            - rp
+            - dr
+        profile_1:
+          $ref: '#/components/schemas/MatchingPairDatingProfileInfo'
+        profile_2:
+          $ref: '#/components/schemas/MatchingPairDatingProfileInfo'
+        dating_room:
+          type: integer
+          format: int64
+        archive_matching_pool_id:
+          type: integer
+          format: int64
+        is_profile_1_exposed:
+          type: boolean
+          default: false
+        is_profile_2_exposed:
+          type: boolean
+          default: false
+        is_active:
+          type: boolean
+          description: Match pair is not disbanded
+        has_established_connection:
+          type: boolean
+          description: both participants have exchanged 1-1 messages
+          default: false
+        is_in_relationship:
+          type: boolean
+          default: false
+        is_frozen:
+          type: boolean
+          description: chat has been frozen.
+          default: false
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        latest_activity:
+          $ref: '#/components/schemas/ReadMatchingPairProfileActivity'
+    MatchingPairDatingProfileInfo:
+      type: object
+      required:
+        - avatar
+        - name
+        - id
+      properties:
+        avatar:
+          type: string
+        name:
+          type: string
+        id:
+          type: string
+    MatchingPairProfileActivityType:
+      type: string
+      enum:
+        - expose_profile
+        - accept_relationship
+        - reject_relationship
+        - leave_chat
     ReadAssessmentQuestion:
       type: object
       required:
@@ -1765,6 +2122,7 @@ components:
           format: int64
         is_active:
           type: boolean
+          description: room is available for joining
         search_distance_range:
           type: integer
           format: int32
@@ -1840,6 +2198,30 @@ components:
           type: string
         category:
           type: string
+    ReadMatchingPairProfileActivity:
+      type: object
+      required:
+        - id
+        - pair
+        - profile
+        - activity
+        - created_at
+      properties:
+        id:
+          type: integer
+          format: int64
+        pair:
+          type: integer
+          format: int64
+        profile:
+          type: string
+        activity:
+          allOf:
+            - $ref: '#/components/schemas/MatchingPairProfileActivityType'
+          description: AcceptRelationship will set a schedule task to auto-delete pair if response was not provided.
+        created_at:
+          type: string
+          format: date-time
     ReadTextPrompt:
       type: object
       required:
@@ -1912,6 +2294,107 @@ components:
       type: string
       enum:
         - about_me
+    UnExposedReadDatingProfile:
+      type: object
+      required:
+        - user
+        - name
+        - dob
+        - gender
+        - show_subgender_on_profile
+        - dating_intention
+        - interest_tags
+        - audios
+        - prompts
+        - location
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        name:
+          type: string
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/Gender'
+        bio:
+          type: string
+        subgender:
+          anyOf:
+            - $ref: '#/components/schemas/SubGendersInFemale'
+            - $ref: '#/components/schemas/SubGendersInNonBinary'
+            - $ref: '#/components/schemas/SubGendersInMale'
+        show_subgender_on_profile:
+          type: boolean
+          default: false
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntention'
+        interest_tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadInterestTag'
+          minItems: 5
+          maxItems: 8
+        audios:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - content_type
+              - url
+              - is_profile_picture
+              - position
+            properties:
+              id:
+                type: integer
+                format: int32
+              content_type:
+                type: string
+                enum:
+                  - audio
+              url:
+                type: string
+              caption:
+                type: string
+              is_profile_picture:
+                type: boolean
+                default: false
+              position:
+                type: integer
+                format: int8
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+          maxItems: 2
+        prompts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadDatingProfileTextPrompt'
+          maxItems: 3
+        sexuality:
+          $ref: '#/components/schemas/Sexuality'
+        location:
+          type: string
+          description: Locality name
+        work:
+          type: string
+        job_title:
+          type: string
+        college:
+          type: string
+        education_level:
+          type: string
+          enum:
+            - Secondary School
+            - Undergrad
+            - Postgrad
+            - Prefer not to say
+        hometown:
+          type: string
     UpdateDatingProfile:
       type: object
       properties:
