@@ -21,6 +21,8 @@ alias ViewsetAuthorizedViewAPIErrors = UnauthorizedResponse | BadRequestResponse
 alias ViewsetAuthorizedDetailViewAPIErrors = ViewsetAuthorizedViewAPIErrors | NotFoundResponse;
 
 alias ListResourcesResponse<T> = ReadResponse<T> | ViewsetAuthorizedViewAPIErrors;
+alias WriteResourceResponse<T> = WriteSuccessfullResponse<T> | ViewsetAuthorizedViewAPIErrors;
+alias WriteDetailResourceResponse<T> = WriteSuccessfullResponse<T> | ViewsetAuthorizedDetailViewAPIErrors;
 
 @delete op DeleteResourceById<P extends string | integer, T = void>(@path pk: P): {@statusCode code: 201;} | ViewsetAuthorizedDetailViewAPIErrors;
 

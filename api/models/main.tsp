@@ -363,48 +363,48 @@ enum Sexuality {
 
 
 model DatingProfile {
-    @visibility("read")
+    @visibility("read", "unexpv")
     @key user: User;
 
-    @visibility("read", "create", "update")
+    @visibility("read", "create", "update", "unexpv")
     name: string;
 
-    @visibility("read", "create", "update", "seo")
+    @visibility("read", "create", "update", "seo", "unexpv")
     dob: plainDate;
 
-    @visibility("read", "create", "update", "seo")
+    @visibility("read", "create", "update", "seo", "unexpv")
     gender: Gender;
 
-    @visibility("read", "create", "update")
+    @visibility("read", "create", "update", "unexpv")
     bio?: string;
 
-    @visibility("read", "create", "update")
+    @visibility("read", "create", "update", "unexpv")
     subgender?: SubGendersInFemale | SubGendersInNonBinary | SubGendersInMale;
 
-    @visibility("read", "update")
+    @visibility("read", "update", "unexpv")
     show_subgender_on_profile: boolean = false;
 
     @visibility("read", "create", "update", "seo")
     interested_genders: Gender[];
 
-    @visibility("read", "create", "update", "search_param")
+    @visibility("read", "create", "update", "search_param", "unexpv")
     dating_intention: DatingIntention;
 
-    @visibility("read", "create", "update", "seo")
+    @visibility("read", "create", "update", "seo", "unexpv")
     @maxItems(8)
     @minItems(5)
     interest_tags: ReadInterestTag[];
 
-    @visibility("read")
+    @visibility("read", "expv")
     @minItems(1)
     @maxItems(6)
     medias: ReadDatingProfileContentMedia<MediaContentType.Image | MediaContentType.Video>[];
 
-    @visibility("read")
+    @visibility("read", "unexpv")
     @maxItems(2)
     audios: ReadDatingProfileContentMedia<MediaContentType.Audio>[];
 
-    @visibility("read")
+    @visibility("read", "unexpv")
     @maxItems(3)
     prompts: ReadDatingProfileTextPrompt[];
 
@@ -430,29 +430,29 @@ model DatingProfile {
     @maxValue(1.0)
     profile_completion_score: float32 = 0.0;
 
-    @visibility("read", "update")
+    @visibility("read", "update", "unexpv")
     sexuality?: Sexuality;
 
     @visibility("create", "update", "search_param")
     location_point: GeoPoint;
 
-    @visibility("read", "create", "update", "search_param")
+    @visibility("read", "create", "update", "search_param", "unexpv")
     @doc("Locality name")
     location: string;
 
-    @visibility("read", "update")
+    @visibility("read", "update", "unexpv")
     work?: string;
 
-    @visibility("read", "update")
+    @visibility("read", "update", "unexpv")
     job_title?: string;
 
-    @visibility("read", "update")
+    @visibility("read", "update", "unexpv")
     college?: string;
 
-    @visibility("read", "update")
+    @visibility("read", "update", "unexpv")
     education_level?: "Secondary School" | "Undergrad" | "Postgrad" | "Prefer not to say";
 
-    @visibility("read", "update")
+    @visibility("read", "update", "unexpv")
     hometown?: string;
 
     @visibility("read", "update", "search_param")
@@ -490,6 +490,17 @@ model DatingProfile {
 model ReadDatingProfile {
     ...DatingProfile
 }
+
+@withVisibility("unexpv")
+model UnExposedReadDatingProfile {
+    ...DatingProfile
+}
+
+@withVisibility("unexpv","expv")
+model ExposedReadDatingProfile {
+    ...DatingProfile
+}
+
 
 @withVisibility("create")
 model CreateDatingProfile {
@@ -544,7 +555,7 @@ model DatingRoom {
     @visibility("detail_read")
     owner: ReadDatingRoomOrganizer;
 
-    @visibility("read", "update")
+    @visibility("read", "update", "search_param")
     is_active: boolean;
 
     @visibility("read", "create", "update")
@@ -559,7 +570,7 @@ model DatingRoom {
     @visibility("read", "create", "update")
     venue_address?: string;
 
-    @visibility("read", "create", "update")
+    @visibility("read", "create", "update", "search_param")
     start_date: plainDate;
 
     @visibility("read", "create", "update")
@@ -571,8 +582,8 @@ model DatingRoom {
     @visibility("read", "create", "update")
     end_time?: plainTime;
 
-    @visibility("create", "update")
-    visibility: "Public" | "Private";
+    @visibility("create", "update", "search_param")
+    visibility: "public" | "private";
 
     @visibility("read", "create")
     @doc("cc: Common code. ucpu: Unique code per user.")
@@ -607,7 +618,10 @@ model DatingRoom {
     is_matching_online: boolean;
 
     @visibility("read")
-    participants: int64;
+    participants_count: int64;
+
+    @visibility("read", "search_param")
+    is_participant: boolean = false;
     
 }
 
@@ -616,7 +630,7 @@ model ReadDatingRoom {
     ...DatingRoom
 }
 
-@withVisibility("detail_read")
+@withVisibility("read", "detail_read")
 model DetailReadDatingRoom {
     ...DatingRoom
 }
@@ -636,26 +650,28 @@ model UpdateDatingRoom {
     ...DatingRoom
 }
 
-model MatchingPool {
+model MatchingPool<T extends "rp" | "dr" = "rp"> {
     @visibility("read", "create")
-    profile: ReadDatingProfile;
+    profile: string;
 
     @visibility("read", "create")
-    dating_room?: ReadDatingRoom;
+    dating_room?: int64;
 
+    @visibility("read")
+    pairing_type: T;
     
     @visibility("read")
     created_at: utcDateTime;
 }
 
 @withVisibility("read")
-model ReadMatchingPool {
-    ...MatchingPool
+model ReadMatchingPool<T extends "rp" | "dr" = "rp"> {
+    ...MatchingPool<T>
 }
 
-@withVisibility("update")
-model UpdateMatchingPool {
-    ...MatchingPool
+@withVisibility("create")
+model CreateMatchingPool<T extends "rp" | "dr" = "rp"> {
+    ...MatchingPool<T>
 }
 
 model MatchingPairDatingProfileInfo {
@@ -664,8 +680,9 @@ model MatchingPairDatingProfileInfo {
     id: string;
 }
 
+
 model MatchingPair {
-    @key id: int64;
+    @key id: string;
     pairing_type: "rp" | "dr";
 
     profile_1: MatchingPairDatingProfileInfo;
@@ -673,6 +690,9 @@ model MatchingPair {
     profile_2: MatchingPairDatingProfileInfo;
 
     dating_room?: int64;
+
+    is_profile_1_exposed: boolean = false;
+    is_profile_2_exposed: boolean = false;
 
     @doc("Match pair is not disbanded")
     is_active: boolean;

@@ -20,7 +20,7 @@ op list is ListResources<ReadInterestTag[]>;
 };
 
 
-@route("/account/profile/text_prompt/")
+@route("/profile/text_prompt/")
 interface DatingProfileTextPromptAPIView {
     op list is ListResources<ReadDatingProfileTextPrompt[]>;
     op create is CreateResource<CreateDatingProfileTextPrompt, ReadDatingProfileTextPrompt>;
@@ -28,7 +28,7 @@ interface DatingProfileTextPromptAPIView {
     op delete is DeleteResourceById<int64>;
 }
 
-@route("/account/profile/media/")
+@route("/profile/media/")
 interface DatingProfileMediaAPIView {
     op list is ListResources<ReadDatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>[]>;
     op create is CreateResource<CreateDatingProfileContentMedia, ReadDatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>>;
@@ -38,15 +38,16 @@ interface DatingProfileMediaAPIView {
 }
 
 
-@route("/account/profile")
+@route("/profile")
 interface DatingProfileAPIView {
     op list is ListResources<ReadDatingProfile>;
-    op read is ReadResourceById<string, ReadDatingProfile>;
+    @doc("Based on whether the requested profile is exposed or not, Exposed or UnExposed dating profile will be returned.")
+    op read is ReadResourceById<string, UnExposedReadDatingProfile | ExposedReadDatingProfile>;
     op create is CreateResource<CreateDatingProfile, ReadDatingProfile>;
     op update is UpdateResource<UpdateDatingProfile, ReadDatingProfile>;
 }
 
-@route("/account/profile/dating_preferences")
+@route("/profile/dating_preferences")
 interface DatingProfileDatingPreferencesAPIView {
     op list is ListResources<DatingPreferencesDatingProfile>;
     op update is UpdateResource<DatingPreferencesDatingProfile, DatingPreferencesDatingProfile>;
