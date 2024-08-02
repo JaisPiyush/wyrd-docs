@@ -2,10 +2,22 @@
 
 model User {
     // Phone number
-    username: string;
+    @key username: string;
     email?: string;
 }
 
+model DateRange {
+    lower_date: plainDate;
+    upper_date?: plainDate;
+}
+
+model GeoPoint {
+    type: "Point";
+    point: {
+        x: float32;
+        y: float32;
+    };
+}
 
 /**
  * The DeviceCloudMessagingToken model stores the Firebase Cloud Messaging (FCM) 
@@ -39,14 +51,38 @@ model SetDeviceCloudMessagingTokenModel {
 
 
 model DatingRoomOrganizer {
-    @visibility("read")
-    user: User;
+    @visibility("read", "create")
+    @key user: User;
 
+    @visibility("read")
+    created_at: utcDateTime;
 
 }
 
 
+@withVisibility("read")
+model ReadDatingRoomOrganizer {
+    ...DatingRoomOrganizer
+}
+
+@withVisibility("create")
+model CreateDatingRoomOrganizer {
+    ...DatingRoomOrganizer,
+    email: string;
+    first_name: string;
+    last_name: string;
+}
+
+@withVisibility("update")
+model UpdateDatingRoomOrganizer {
+    ...DatingRoomOrganizer
+}
+
+
 model InterestTag {
+    @visibility("read")
+    @key id: int32;
+
     @visibility("read", "create")
     tag: string;
 
@@ -56,10 +92,98 @@ model InterestTag {
     @visibility("read", "create", "update")
     category: string;
 
+    @visibility("hidden")
     embedding: float32[];
 }
 
-model DatingProfileAssessmentQuestion {}
+@withVisibility("read")
+model ReadInterestTag {
+    ...InterestTag
+}
+
+@withVisibility("create")
+model CreateInterestTag {
+    ...InterestTag
+}
+
+@withVisibility("update")
+model UpdateInterestTag {
+    ...InterestTag
+}
+
+enum AssessmentQuestionType {
+    single_choice: "sc",
+    multiple_choice: "mc",
+    text: "txt"
+}
+
+/**
+ * Assessment questions for asking user
+ * 
+ */
+model AssessmentQuestion {
+    @visibility("read")
+    @key id: int32;
+
+    @visibility("read", "create", "update")
+    question_type: AssessmentQuestionType;
+
+    @visibility("read", "create", "update")
+    question: string;
+
+    @visibility("read", "create", "update")
+    description?: string;
+
+    @visibility("read", "create", "update")
+    options?: string[];
+}
+
+@withVisibility("read")
+model ReadAssessmentQuestion {
+    ...AssessmentQuestion
+}
+
+@withVisibility("create")
+model CreateAssessmentQuestion {
+    ...AssessmentQuestion
+}
+
+@withVisibility("update")
+model UpdateAssessmentQuestion {
+    ...AssessmentQuestion
+}
+
+model DatingProfileAssessmentQuestion {
+    @visibility("read", "create")
+    question: ReadAssessmentQuestion;
+
+    @visibility("create")
+    profile: DatingProfile;
+
+    @visibility("read", "create", "update")
+    answer: string;
+
+    @visibility("read", "create", "update")
+    selected_option_index?: int32;
+
+    @visibility("hidden")
+    embedding: float64[];
+}
+
+@withVisibility("read")
+model ReadDatingProfileAssessmentQuestion {
+    ...DatingProfileAssessmentQuestion
+}
+
+@withVisibility("create")
+model CreateDatingProfileAssessmentQuestion {
+    ...DatingProfileAssessmentQuestion
+}
+
+@withVisibility("update")
+model UpdateDatingProfileAssessmentQuestion {
+    ...DatingProfileAssessmentQuestion
+}
 
 
 enum MediaContentType {
@@ -72,6 +196,12 @@ enum MediaContentType {
  * 
  */
 model DatingProfileContentMedia<T extends MediaContentType> {
+    @visibility("read")
+    @key id: int32;
+
+    @visibility("create")
+    profile: DatingProfile;
+
     @visibility("read", "create", "update")
     content_type: T;
 
@@ -94,7 +224,80 @@ model DatingProfileContentMedia<T extends MediaContentType> {
     updated_at?: utcDateTime;
 }
 
-model DatingProfileTextPrompt {}
+@withVisibility("read")
+model ReadDatingProfileContentMedia<T extends MediaContentType> {
+    ...DatingProfileContentMedia<T>
+}
+
+@withVisibility("create")
+model CreateDatingProfileContentMedia {
+    ...DatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>
+}
+
+@withVisibility("update")
+model UpdateDatingProfileContentMedia {
+    ...DatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>
+}
+
+
+enum TextPromptCategory {
+    AboutMed: "about_me"
+}
+
+model TextPrompt {
+    @visibility("read")
+    @key id: int32;
+
+    @visibility("read", "create", "update")
+    question: string;
+
+    @visibility("read", "create", "update")
+    category: string;
+}
+
+@withVisibility("read")
+model ReadTextPrompt {
+    ...TextPrompt
+}
+
+@withVisibility("create")
+model CreateTextPrompt {
+    ...TextPrompt
+}
+
+@withVisibility("update")
+model UpdateTextPrompt {
+    ...TextPrompt
+}
+
+model DatingProfileTextPrompt {
+    @visibility("read")
+    @key id: int64;
+
+    @visibility("read", "create")
+    prompt: ReadTextPrompt;
+
+    @visibility("create")
+    profile: DatingProfile;
+
+    @visibility("read", "create", "update")
+    answer: string;
+}
+
+@withVisibility("read")
+model ReadDatingProfileTextPrompt {
+    ...DatingProfileTextPrompt
+}
+
+@withVisibility("create")
+model CreateDatingProfileTextPrompt {
+    ...DatingProfileTextPrompt
+}
+
+@withVisibility("update")
+model UpdateDatingProfileTextPrompt {
+    ...DatingProfileTextPrompt
+}
 
 enum SubGendersInMale {
     Man: "man",
@@ -144,19 +347,36 @@ enum DatingIntention {
     ShortTermOpenToLong: "stlt",
 }
 
+enum Sexuality {
+    Straight: "straight",
+    Gay: "gay",
+    Lesbian: "lesbian",
+    Bisexual: "bisexual",
+    Allosexual: "allosexual",
+    Androsexual: "adnrosexual",
+    Asexual: "asexual",
+    Autosexual: "autosexual",
+    Bicurious: "bicurious",
+    Demisexual: "demisexual",
+    // more to come
+}
+
 
 model DatingProfile {
     @visibility("read")
-    user: User;
+    @key user: User;
 
     @visibility("read", "create", "update")
     name: string;
 
-    @visibility("read", "create", "update", "dating_dim")
+    @visibility("read", "create", "update", "seo")
     dob: plainDate;
 
-    @visibility("read", "create", "update", "dating_dim")
+    @visibility("read", "create", "update", "seo")
     gender: Gender;
+
+    @visibility("read", "create", "update")
+    bio?: string;
 
     @visibility("read", "create", "update")
     subgender?: SubGendersInFemale | SubGendersInNonBinary | SubGendersInMale;
@@ -164,31 +384,351 @@ model DatingProfile {
     @visibility("read", "update")
     show_subgender_on_profile: boolean = false;
 
-    @visibility("read", "create", "update", "dating_pref")
+    @visibility("read", "create", "update", "seo")
     interested_genders: Gender[];
 
-    @visibility("read", "create", "update", "dating_pref")
+    @visibility("read", "create", "update", "search_param")
     dating_intention: DatingIntention;
 
-    @visibility("read", "create", "update", "dating_pref")
+    @visibility("read", "create", "update", "seo")
     @maxItems(8)
     @minItems(5)
-    interest_tags: InterestTag[];
+    interest_tags: ReadInterestTag[];
 
     @visibility("read")
     @minItems(1)
     @maxItems(6)
-    medias: DatingProfileContentMedia<MediaContentType.Image | MediaContentType.Video>[];
+    medias: ReadDatingProfileContentMedia<MediaContentType.Image | MediaContentType.Video>[];
 
     @visibility("read")
     @maxItems(2)
-    audios: DatingProfileContentMedia<MediaContentType.Audio>[];
+    audios: ReadDatingProfileContentMedia<MediaContentType.Audio>[];
+
+    @visibility("read")
+    @maxItems(3)
+    prompts: ReadDatingProfileTextPrompt[];
+
+    @visibility("read")
+    is_active: boolean;
+
+    /**
+     * `is_in_relationship` is marked by internal system indicating account's status of relationship.
+     * This state variable will be used in Matching Pools to remove already in relationship accounts.
+     */
+    @visibility("read")
+    is_in_relationship: boolean  = false;
+
+    /**
+     * 
+     *  - 10 questions provided
+     *  - 1 image & 2 media
+     *  - bio written
+     *  - 3 text prompts
+     *  - 8 interest tags
+     */
+    @visibility("read")
+    @maxValue(1.0)
+    profile_completion_score: float32 = 0.0;
+
+    @visibility("read", "update")
+    sexuality?: Sexuality;
+
+    @visibility("create", "update", "search_param")
+    location_point: GeoPoint;
+
+    @visibility("read", "create", "update", "search_param")
+    @doc("Locality name")
+    location: string;
+
+    @visibility("read", "update")
+    work?: string;
+
+    @visibility("read", "update")
+    job_title?: string;
+
+    @visibility("read", "update")
+    college?: string;
+
+    @visibility("read", "update")
+    education_level?: "Secondary School" | "Undergrad" | "Postgrad" | "Prefer not to say";
+
+    @visibility("read", "update")
+    hometown?: string;
+
+    @visibility("read", "update", "search_param")
+    search_range: int16 = 20000;
+
+    @visibility("read", "update", "search_param")
+    age_range: DateRange;
+
+    @visibility("update", "seo")
+    questions: ReadDatingProfileAssessmentQuestion[];
+
+    
+    @visibility("read")
+    current_active_chats: int16 = 0;
+
+    @visibility("read")
+    matches_found_after_previous_cooldown: int16 = 0;
+
+    @visibility("read")
+    matching_quota: int16 = 5;
+
+    @visibility("read")
+    cool_down_expire_at?: utcDateTime;
+
+    @visibility("read")
+    is_profile_in_dating_pool: boolean = false;
+
+    @visibility("hidden")
+    question_embedding: float64[];
+
+
+}
+
+@withVisibility("read")
+model ReadDatingProfile {
+    ...DatingProfile
+}
+
+@withVisibility("create")
+model CreateDatingProfile {
+    ...DatingProfile
+}
+
+@withVisibility("update")
+model UpdateDatingProfile {
+    ...DatingProfile
+}
+
+@withVisibility("seo")
+model SEODatingProfile {
+    ...DatingProfile
+}
+
+@withVisibility("search_param")
+model DatingPreferencesDatingProfile {
+    ...DatingProfile
+}
+
+
+model ReadDatingProfileMatchingStatus {
+    matching_quota: int16 = 5;
+    matches_found_after_previous_cooldown: int16 = 0;
+    cool_down_expire_at?: utcDateTime;
+    is_matching_enabled: boolean = true;
+    matching_disabled_reason?: "cool_down" | "blocked" | "unknown" | "finding_match";
+    matching_disabled_reason_message?: string;
+}
+
+/**
+ * 
+ * start_date: Specifies the date when the dating room will start displaying matches. 
+ * The dating room has a start_time, which defaults to 12 PM.
+ * end_date: Automatically closes the dating room, removes it from search, and stops the matching process within the dating room on this date. 
+ * All matches made before this date will persist.
+ * start_time: The time of day when the dating room begins matching, defaulting to 12 PM.
+ * end_time: By default, set to 12 PM. If end_date is not defined, the dating room remains in search indefinitely. 
+ * If only end_time is provided, the dating room will be active for matching only between start_time and end_time each day. 
+ * If the creator has enabled auto_flush_participants, the matching pool will be emptied at the end of each day at end_time.
+ * Requirements: The room creator must specify either end_date or end_time to close the matching system or the dating room.
+ * Visibility: A public dating room is searchable from the day of creation until end_date.
+ * If location is undefined the dating room can be joined by anybody from anywhere in the world.
+ * 
+ */
+model DatingRoom {
+    @visibility("read", "search_param")
+    @key id: int64;
+
+
+    @visibility("detail_read")
+    owner: ReadDatingRoomOrganizer;
+
+    @visibility("read", "update")
+    is_active: boolean;
+
+    @visibility("read", "create", "update")
+    search_distance_range?: int32 = 20000;
+
+    @visibility("read", "create", "update", "search_param")
+    location?: GeoPoint;
+
+    @visibility("read", "create", "update")
+    venue_name?: string;
+
+    @visibility("read", "create", "update")
+    venue_address?: string;
+
+    @visibility("read", "create", "update")
+    start_date: plainDate;
+
+    @visibility("read", "create", "update")
+    start_time: plainTime;
+
+    @visibility("read", "create", "update")
+    end_date?: plainDate;
+
+    @visibility("read", "create", "update")
+    end_time?: plainTime;
+
+    @visibility("create", "update")
+    visibility: "Public" | "Private";
+
+    @visibility("read", "create")
+    @doc("cc: Common code. ucpu: Unique code per user.")
+    entry_code_type: "cc" | "ucpu";
+
+    @visibility("read", "create", "update", "search_param")
+    name: string;
+
+    @visibility("detail_read", "create", "update")
+    description: string;
+
+    @visibility("read", "create", "update")
+    banner: string;
+
+    @visibility("update")
+    common_code?: string;
+
+    @visibility("detail_read", "create", "update")
+    images: string[];
+
+    @visibility("detail_read", "create", "update")
+    terms_and_conditions?: string[];
+
+    @visibility("read")
+    created_at: utcDateTime;
+
+    @visibility("read")
+    updated_at: utcDateTime;
+
+    @visibility("read")
+    @doc("Matching is online and participants can start matching instantly")
+    is_matching_online: boolean;
+
+    @visibility("read")
+    participants: int64;
+    
+}
+
+@withVisibility("read")
+model ReadDatingRoom {
+    ...DatingRoom
+}
+
+@withVisibility("detail_read")
+model DetailReadDatingRoom {
+    ...DatingRoom
+}
+
+@withVisibility("search_param")
+model SearchParamDatingRoom {
+    ...DatingRoom
+}
+
+@withVisibility("create")
+model CreateDatingRoom {
+    ...DatingRoom
+}
+
+@withVisibility("update")
+model UpdateDatingRoom {
+    ...DatingRoom
+}
+
+model MatchingPool {
+    @visibility("read", "create")
+    profile: ReadDatingProfile;
+
+    @visibility("read", "create")
+    dating_room?: ReadDatingRoom;
+
+    
+    @visibility("read")
+    created_at: utcDateTime;
+}
+
+@withVisibility("read")
+model ReadMatchingPool {
+    ...MatchingPool
+}
+
+@withVisibility("update")
+model UpdateMatchingPool {
+    ...MatchingPool
+}
+
+model MatchingPairDatingProfileInfo {
+    avatar: string;
+    name: string;
+    id: string;
+}
+
+model MatchingPair {
+    @key id: int64;
+    pairing_type: "rp" | "dr";
+
+    profile_1: MatchingPairDatingProfileInfo;
+
+    profile_2: MatchingPairDatingProfileInfo;
+
+    dating_room?: int64;
+
+    @doc("Match pair is not disbanded")
+    is_active: boolean;
+
+    @doc("both participants have exchanged 1-1 messages")
+    has_established_connection: boolean = false;
+
+    is_in_relationship: boolean = false;
+
+    @doc("chat has been frozen.")
+    is_frozen: boolean = false;
+
+    created_at: utcDateTime;
+
+    updated_at: utcDateTime;
+
+    latest_activity?: ReadMatchingPairProfileActivity;
 
 
 }
 
 
+enum MatchingPairProfileActivityType {
+    ExposeProfile: "expose_profile",
+    AcceptRelationship: "accept_relationship",
+    RejectRealtionship: "reject_relationship",
+    LeaveChat: "leave_chat"
+}
 
+model MatchingPairProfileActivity {
+    @visibility("read")
+    @key id: int64;
+
+    @visibility("read")
+    pair: int64;
+    @visibility("read")
+    profile: string;
+    @visibility("read", "create")
+    @doc("AcceptRelationship will set a schedule task to auto-delete pair if response was not provided.")
+    activity: MatchingPairProfileActivityType;
+
+    @visibility("read")
+    created_at: utcDateTime;
+
+}
+
+
+@withVisibility("read")
+model ReadMatchingPairProfileActivity {
+    ...MatchingPairProfileActivity
+}
+
+@withVisibility("create")
+model CreateMatchingPairProfileActivity {
+    ...MatchingPairProfileActivity
+}
 
 
 // /**

@@ -62,7 +62,17 @@ The primary objective of this document is to develop a flutter dating app that a
 
 ## Activities
 
+1. ### Create Profile Activity
+ - route
+ - pages
+ - state (Bloc state management)
+
 ## Pages
+
+## Bloc
+1. ### CreateProfile Bloc
+- States
+- Events
 
 ## Widgets
 

@@ -18,9 +18,11 @@ namespace WyrdAPI {
   namespace AccountAuthAPI {}
 
   @route("/account")
+  @useAuth(BearerAuth)
   namespace AccountAPI {}
 
   @route("/superuser")
+  @useAuth(BearerAuth)
   namespace SuperUserAPI {
     
   }
@@ -28,4 +30,8 @@ namespace WyrdAPI {
   @route("/match")
   @useAuth(BearerAuth)
   namespace MatchAPI {}
+
+  @route("/match/room/organizer")
+  @useAuth(BearerAuth)
+  namespace DatingRoomOrganizer {}
 }

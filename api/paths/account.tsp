@@ -10,47 +10,44 @@ using TypeSpec.Rest;
 
 namespace WyrdAPI.AccountAPI;
 
-// @route("/interest-tags")
-// @useAuth(BearerAuth)
-// @get op list(): {
-//     @body tags: ReadableInterestTag[];
-//     @statusCode statusCode: 200;
-// } | {
-//     @statusCode statusCode: 401 | 500;
-// };
+@route("/interest-tags")
+op list is ListResources<ReadInterestTag[]>;
 
-// @route("/device/token")
-// @doc("set FCM device token for notification")
-// @useAuth(BearerAuth)
-// @post op set(@body data: SetDeviceCloudMessagingTokenModel): {
-//     @statusCode status: 201 | 401 | 400;
-// };
+@route("/device/token")
+@doc("set FCM device token for notification")
+@post op set(@body data: SetDeviceCloudMessagingTokenModel): {
+    @statusCode status: 201 | 401 | 400;
+};
 
 
-// @route("/me")
-// @useAuth(BearerAuth)
-// @get op read(): {
-//     @body user: User;
-//     @statusCode status: 200;
-// } | {@statusCode status: 401 | 400;};
+@route("/account/profile/text_prompt/")
+interface DatingProfileTextPromptAPIView {
+    op list is ListResources<ReadDatingProfileTextPrompt[]>;
+    op create is CreateResource<CreateDatingProfileTextPrompt, ReadDatingProfileTextPrompt>;
+    op read is ReadResourceById<int64, ReadDatingProfileTextPrompt>;
+    op delete is DeleteResourceById<int64>;
+}
 
-// @route("/dating/profile")
-// @useAuth(BearerAuth)
-// interface DatingProfileAPI {
-//     @post op create(@body profile: CreateDatingProfile): {
-//         @body profile: ReadableDatingProfile;
-//         @statusCode status: 201;
-//     } | {
-//         @statusCode status: 401 | 400;
-//     };
+@route("/account/profile/media/")
+interface DatingProfileMediaAPIView {
+    op list is ListResources<ReadDatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>[]>;
+    op create is CreateResource<CreateDatingProfileContentMedia, ReadDatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>>;
+    op read is ReadResourceById<int32, ReadDatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>>;
+    op delete is DeleteResourceById<int32>;
 
-//     @get op read(): ReadableDatingProfile;
+}
 
-//     @put op update(@body data: UpdateDatingProfileModel | SetDatingPreferencesModel): {
-//         @statusCode status: 201;
-//         @body profile: ReadableDatingProfile;
-//     } | {
-//         @statusCode status: 401 | 400;
-//     };
 
-// }
+@route("/account/profile")
+interface DatingProfileAPIView {
+    op list is ListResources<ReadDatingProfile>;
+    op read is ReadResourceById<string, ReadDatingProfile>;
+    op create is CreateResource<CreateDatingProfile, ReadDatingProfile>;
+    op update is UpdateResource<UpdateDatingProfile, ReadDatingProfile>;
+}
+
+@route("/account/profile/dating_preferences")
+interface DatingProfileDatingPreferencesAPIView {
+    op list is ListResources<DatingPreferencesDatingProfile>;
+    op update is UpdateResource<DatingPreferencesDatingProfile, DatingPreferencesDatingProfile>;
+}

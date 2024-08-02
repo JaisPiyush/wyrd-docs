@@ -4,6 +4,417 @@ info:
   version: 0.0.0
 tags: []
 paths:
+  /account/account/profile:
+    get:
+      operationId: DatingProfileAPIView_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingProfile'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: DatingProfileAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingProfile'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatingProfile'
+      security:
+        - BearerAuth: []
+    patch:
+      operationId: DatingProfileAPIView_update
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingProfile'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDatingProfile'
+      security:
+        - BearerAuth: []
+  /account/account/profile/dating_preferences:
+    get:
+      operationId: DatingProfileDatingPreferencesAPIView_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingPreferencesDatingProfile'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    patch:
+      operationId: DatingProfileDatingPreferencesAPIView_update
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingPreferencesDatingProfile'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingPreferencesDatingProfileUpdate'
+      security:
+        - BearerAuth: []
+  /account/account/profile/media:
+    get:
+      operationId: DatingProfileMediaAPIView_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - content_type
+                    - url
+                    - is_profile_picture
+                    - position
+                  properties:
+                    id:
+                      type: integer
+                      format: int32
+                    content_type:
+                      anyOf:
+                        - type: string
+                          enum:
+                            - audio
+                        - type: string
+                          enum:
+                            - image
+                        - type: string
+                          enum:
+                            - image
+                    url:
+                      type: string
+                    caption:
+                      type: string
+                    is_profile_picture:
+                      type: boolean
+                      default: false
+                    position:
+                      type: integer
+                      format: int8
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: DatingProfileMediaAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - content_type
+                  - url
+                  - is_profile_picture
+                  - position
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  content_type:
+                    anyOf:
+                      - type: string
+                        enum:
+                          - audio
+                      - type: string
+                        enum:
+                          - image
+                      - type: string
+                        enum:
+                          - image
+                  url:
+                    type: string
+                  caption:
+                    type: string
+                  is_profile_picture:
+                    type: boolean
+                    default: false
+                  position:
+                    type: integer
+                    format: int8
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatingProfileContentMedia'
+      security:
+        - BearerAuth: []
+  /account/account/profile/media/{pk}:
+    get:
+      operationId: DatingProfileMediaAPIView_read
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - content_type
+                  - url
+                  - is_profile_picture
+                  - position
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  content_type:
+                    anyOf:
+                      - type: string
+                        enum:
+                          - audio
+                      - type: string
+                        enum:
+                          - image
+                      - type: string
+                        enum:
+                          - image
+                  url:
+                    type: string
+                  caption:
+                    type: string
+                  is_profile_picture:
+                    type: boolean
+                    default: false
+                  position:
+                    type: integer
+                    format: int8
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    delete:
+      operationId: DatingProfileMediaAPIView_delete
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+  /account/account/profile/text_prompt:
+    get:
+      operationId: DatingProfileTextPromptAPIView_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadDatingProfileTextPrompt'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: DatingProfileTextPromptAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingProfileTextPrompt'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatingProfileTextPrompt'
+      security:
+        - BearerAuth: []
+  /account/account/profile/text_prompt/{pk}:
+    get:
+      operationId: DatingProfileTextPromptAPIView_read
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingProfileTextPrompt'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    delete:
+      operationId: DatingProfileTextPromptAPIView_delete
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+  /account/account/profile/{pk}:
+    get:
+      operationId: DatingProfileAPIView_read
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingProfile'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
   /account/auth/login/phone:
     post:
       operationId: AccountAuthAPI_login
@@ -87,6 +498,439 @@ paths:
                 - refresh
       security:
         - BearerAuth: []
+  /account/device/token:
+    post:
+      operationId: AccountAPI_set
+      description: set FCM device token for notification
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetDeviceCloudMessagingTokenModel'
+      security:
+        - BearerAuth: []
+  /account/interest-tags:
+    get:
+      operationId: AccountAPI_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadInterestTag'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+  /superuser/assessment_question:
+    get:
+      operationId: AssessmentQuestionAPIView_list
+      parameters:
+        - name: question
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: question_type
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/AssessmentQuestionType'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadAssessmentQuestion'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: AssessmentQuestionAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadAssessmentQuestion'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssessmentQuestion'
+      security:
+        - BearerAuth: []
+  /superuser/assessment_question/{pk}:
+    get:
+      operationId: AssessmentQuestionAPIView_read
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadAssessmentQuestion'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    delete:
+      operationId: AssessmentQuestionAPIView_delete
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+  /superuser/dating_room/organizer:
+    get:
+      operationId: DatingRoomOrganizerAPIView_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadDatingRoomOrganizer'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: DatingRoomOrganizerAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingRoomOrganizer'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatingRoomOrganizer'
+      security:
+        - BearerAuth: []
+  /superuser/dating_room/organizer/{pk}:
+    get:
+      operationId: DatingRoomOrganizerAPIView_read
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingRoomOrganizer'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    delete:
+      operationId: DatingRoomOrganizerAPIView_delete
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+  /superuser/interest-tag:
+    get:
+      operationId: InterestTagAPIView_list
+      parameters:
+        - name: tag
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadInterestTag'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: InterestTagAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadInterestTag'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInterestTag'
+      security:
+        - BearerAuth: []
+  /superuser/interest-tag/{pk}:
+    get:
+      operationId: InterestTagAPIView_read
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadInterestTag'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    patch:
+      operationId: InterestTagAPIView_update
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadInterestTag'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInterestTag'
+      security:
+        - BearerAuth: []
+    delete:
+      operationId: InterestTagAPIView_delete
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+  /superuser/text_prompt:
+    get:
+      operationId: TextPromptAPIView_list
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/TextPromptCategory'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadTextPrompt'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: TextPromptAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadTextPrompt'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTextPrompt'
+      security:
+        - BearerAuth: []
+  /superuser/text_prompt/{pk}:
+    get:
+      operationId: TextPromptAPIView_read
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadTextPrompt'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    delete:
+      operationId: TextPromptAPIView_delete
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
 components:
   schemas:
     AccountAuthAPI.PhoneLoginBody:
@@ -97,6 +941,730 @@ components:
         token:
           type: string
           description: verifyIdToken provided by Firebase Phone Authentication. This token is used to retrieve the user's phone number.
+    AssessmentQuestionType:
+      type: string
+      enum:
+        - sc
+        - mc
+        - txt
+    CreateAssessmentQuestion:
+      type: object
+      required:
+        - question_type
+        - question
+      properties:
+        question_type:
+          $ref: '#/components/schemas/AssessmentQuestionType'
+        question:
+          type: string
+        description:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+    CreateDatingProfile:
+      type: object
+      required:
+        - name
+        - dob
+        - gender
+        - interested_genders
+        - dating_intention
+        - interest_tags
+        - location_point
+        - location
+      properties:
+        name:
+          type: string
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/Gender'
+        bio:
+          type: string
+        subgender:
+          anyOf:
+            - $ref: '#/components/schemas/SubGendersInFemale'
+            - $ref: '#/components/schemas/SubGendersInNonBinary'
+            - $ref: '#/components/schemas/SubGendersInMale'
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gender'
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntention'
+        interest_tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadInterestTag'
+          minItems: 5
+          maxItems: 8
+        location_point:
+          $ref: '#/components/schemas/GeoPoint'
+        location:
+          type: string
+          description: Locality name
+    CreateDatingProfileContentMedia:
+      type: object
+      required:
+        - profile
+        - content_type
+        - url
+        - is_profile_picture
+      properties:
+        profile:
+          $ref: '#/components/schemas/DatingProfile'
+        content_type:
+          anyOf:
+            - type: string
+              enum:
+                - audio
+            - type: string
+              enum:
+                - image
+            - type: string
+              enum:
+                - image
+        url:
+          type: string
+        caption:
+          type: string
+        is_profile_picture:
+          type: boolean
+          default: false
+    CreateDatingProfileTextPrompt:
+      type: object
+      required:
+        - prompt
+        - profile
+        - answer
+      properties:
+        prompt:
+          $ref: '#/components/schemas/ReadTextPrompt'
+        profile:
+          $ref: '#/components/schemas/DatingProfile'
+        answer:
+          type: string
+    CreateDatingRoomOrganizer:
+      type: object
+      required:
+        - user
+        - email
+        - first_name
+        - last_name
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    CreateInterestTag:
+      type: object
+      required:
+        - tag
+        - icon
+        - category
+      properties:
+        tag:
+          type: string
+        icon:
+          type: string
+        category:
+          type: string
+    CreateTextPrompt:
+      type: object
+      required:
+        - question
+        - category
+      properties:
+        question:
+          type: string
+        category:
+          type: string
+    DateRange:
+      type: object
+      required:
+        - lower_date
+      properties:
+        lower_date:
+          type: string
+          format: date
+        upper_date:
+          type: string
+          format: date
+    DateRangeUpdate:
+      type: object
+      properties:
+        lower_date:
+          type: string
+          format: date
+        upper_date:
+          type: string
+          format: date
+    DatingIntention:
+      type: string
+      enum:
+        - lt
+        - st
+        - cs
+        - ltst
+        - stlt
+    DatingPreferencesDatingProfile:
+      type: object
+      required:
+        - dating_intention
+        - location_point
+        - location
+        - search_range
+        - age_range
+      properties:
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntention'
+        location_point:
+          $ref: '#/components/schemas/GeoPoint'
+        location:
+          type: string
+          description: Locality name
+        search_range:
+          type: integer
+          format: int16
+          default: 20000
+        age_range:
+          $ref: '#/components/schemas/DateRange'
+    DatingPreferencesDatingProfileUpdate:
+      type: object
+      properties:
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntention'
+        location_point:
+          $ref: '#/components/schemas/GeoPointUpdate'
+        location:
+          type: string
+          description: Locality name
+        search_range:
+          type: integer
+          format: int16
+          default: 20000
+        age_range:
+          $ref: '#/components/schemas/DateRangeUpdate'
+    DatingProfile:
+      type: object
+      required:
+        - name
+        - dob
+        - gender
+        - interested_genders
+        - dating_intention
+        - interest_tags
+        - location_point
+        - location
+      properties:
+        name:
+          type: string
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/Gender'
+        bio:
+          type: string
+        subgender:
+          anyOf:
+            - $ref: '#/components/schemas/SubGendersInFemale'
+            - $ref: '#/components/schemas/SubGendersInNonBinary'
+            - $ref: '#/components/schemas/SubGendersInMale'
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gender'
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntention'
+        interest_tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadInterestTag'
+          minItems: 5
+          maxItems: 8
+        location_point:
+          $ref: '#/components/schemas/GeoPoint'
+        location:
+          type: string
+          description: Locality name
+    Gender:
+      type: string
+      enum:
+        - man
+        - women
+        - non-binary
+    GeoPoint:
+      type: object
+      required:
+        - type
+        - point
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+        point:
+          type: object
+          properties:
+            x:
+              type: number
+              format: float
+            y:
+              type: number
+              format: float
+          required:
+            - x
+            - y
+    GeoPointUpdate:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Point
+        point:
+          type: object
+          properties:
+            x:
+              type: number
+              format: float
+            y:
+              type: number
+              format: float
+    ReadAssessmentQuestion:
+      type: object
+      required:
+        - id
+        - question_type
+        - question
+      properties:
+        id:
+          type: integer
+          format: int32
+        question_type:
+          $ref: '#/components/schemas/AssessmentQuestionType'
+        question:
+          type: string
+        description:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+    ReadDatingProfile:
+      type: object
+      required:
+        - user
+        - name
+        - dob
+        - gender
+        - show_subgender_on_profile
+        - interested_genders
+        - dating_intention
+        - interest_tags
+        - medias
+        - audios
+        - prompts
+        - is_active
+        - is_in_relationship
+        - profile_completion_score
+        - location
+        - search_range
+        - age_range
+        - current_active_chats
+        - matches_found_after_previous_cooldown
+        - matching_quota
+        - is_profile_in_dating_pool
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        name:
+          type: string
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/Gender'
+        bio:
+          type: string
+        subgender:
+          anyOf:
+            - $ref: '#/components/schemas/SubGendersInFemale'
+            - $ref: '#/components/schemas/SubGendersInNonBinary'
+            - $ref: '#/components/schemas/SubGendersInMale'
+        show_subgender_on_profile:
+          type: boolean
+          default: false
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gender'
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntention'
+        interest_tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadInterestTag'
+          minItems: 5
+          maxItems: 8
+        medias:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - content_type
+              - url
+              - is_profile_picture
+              - position
+            properties:
+              id:
+                type: integer
+                format: int32
+              content_type:
+                anyOf:
+                  - type: string
+                    enum:
+                      - image
+                  - type: string
+                    enum:
+                      - video
+              url:
+                type: string
+              caption:
+                type: string
+              is_profile_picture:
+                type: boolean
+                default: false
+              position:
+                type: integer
+                format: int8
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+          minItems: 1
+          maxItems: 6
+        audios:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - content_type
+              - url
+              - is_profile_picture
+              - position
+            properties:
+              id:
+                type: integer
+                format: int32
+              content_type:
+                type: string
+                enum:
+                  - audio
+              url:
+                type: string
+              caption:
+                type: string
+              is_profile_picture:
+                type: boolean
+                default: false
+              position:
+                type: integer
+                format: int8
+              created_at:
+                type: string
+                format: date-time
+              updated_at:
+                type: string
+                format: date-time
+          maxItems: 2
+        prompts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadDatingProfileTextPrompt'
+          maxItems: 3
+        is_active:
+          type: boolean
+        is_in_relationship:
+          type: boolean
+          description: |-
+            `is_in_relationship` is marked by internal system indicating account's status of relationship.
+            This state variable will be used in Matching Pools to remove already in relationship accounts.
+          default: false
+        profile_completion_score:
+          type: number
+          format: float
+          maximum: 1
+          description: |-
+            - 10 questions provided
+            - 1 image & 2 media
+            - bio written
+            - 3 text prompts
+            - 8 interest tags
+          default: 0
+        sexuality:
+          $ref: '#/components/schemas/Sexuality'
+        location:
+          type: string
+          description: Locality name
+        work:
+          type: string
+        job_title:
+          type: string
+        college:
+          type: string
+        education_level:
+          type: string
+          enum:
+            - Secondary School
+            - Undergrad
+            - Postgrad
+            - Prefer not to say
+        hometown:
+          type: string
+        search_range:
+          type: integer
+          format: int16
+          default: 20000
+        age_range:
+          $ref: '#/components/schemas/DateRange'
+        current_active_chats:
+          type: integer
+          format: int16
+          default: 0
+        matches_found_after_previous_cooldown:
+          type: integer
+          format: int16
+          default: 0
+        matching_quota:
+          type: integer
+          format: int16
+          default: 5
+        cool_down_expire_at:
+          type: string
+          format: date-time
+        is_profile_in_dating_pool:
+          type: boolean
+          default: false
+    ReadDatingProfileAssessmentQuestion:
+      type: object
+      required:
+        - question
+        - answer
+      properties:
+        question:
+          $ref: '#/components/schemas/ReadAssessmentQuestion'
+        answer:
+          type: string
+        selected_option_index:
+          type: integer
+          format: int32
+    ReadDatingProfileTextPrompt:
+      type: object
+      required:
+        - id
+        - prompt
+        - answer
+      properties:
+        id:
+          type: integer
+          format: int64
+        prompt:
+          $ref: '#/components/schemas/ReadTextPrompt'
+        answer:
+          type: string
+    ReadDatingRoomOrganizer:
+      type: object
+      required:
+        - user
+        - created_at
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        created_at:
+          type: string
+          format: date-time
+    ReadInterestTag:
+      type: object
+      required:
+        - id
+        - tag
+        - icon
+        - category
+      properties:
+        id:
+          type: integer
+          format: int32
+        tag:
+          type: string
+        icon:
+          type: string
+        category:
+          type: string
+    ReadTextPrompt:
+      type: object
+      required:
+        - id
+        - question
+        - category
+      properties:
+        id:
+          type: integer
+          format: int32
+        question:
+          type: string
+        category:
+          type: string
+    SetDeviceCloudMessagingTokenModel:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+          description: This field stores the unique device token provided by FCM. It is used to identify the device to which notifications should be sent. This field is the primary key for this model, ensuring each token is unique.
+    Sexuality:
+      type: string
+      enum:
+        - straight
+        - gay
+        - lesbian
+        - bisexual
+        - allosexual
+        - adnrosexual
+        - asexual
+        - autosexual
+        - bicurious
+        - demisexual
+    SubGendersInFemale:
+      type: string
+      enum:
+        - woman
+        - demifemale
+        - intersex-woman
+        - trans-woman
+        - trans-femine
+    SubGendersInMale:
+      type: string
+      enum:
+        - man
+        - demimale
+        - intersex-man
+        - trans-man
+        - trans-masculine
+    SubGendersInNonBinary:
+      type: string
+      enum:
+        - non-binary
+        - agender
+        - bigender
+        - gender-non-conforming
+        - gender-variant
+        - intersex
+        - neutrols
+        - pangender
+        - polygender
+        - transgender
+        - two-spirit
+        - gender-fluid
+        - gender-questioning
+        - genderqueer
+    TextPromptCategory:
+      type: string
+      enum:
+        - about_me
+    UpdateDatingProfile:
+      type: object
+      properties:
+        name:
+          type: string
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/Gender'
+        bio:
+          type: string
+        subgender:
+          anyOf:
+            - $ref: '#/components/schemas/SubGendersInFemale'
+            - $ref: '#/components/schemas/SubGendersInNonBinary'
+            - $ref: '#/components/schemas/SubGendersInMale'
+        show_subgender_on_profile:
+          type: boolean
+          default: false
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gender'
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntention'
+        interest_tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadInterestTag'
+          minItems: 5
+          maxItems: 8
+        sexuality:
+          $ref: '#/components/schemas/Sexuality'
+        location_point:
+          $ref: '#/components/schemas/GeoPointUpdate'
+        location:
+          type: string
+          description: Locality name
+        work:
+          type: string
+        job_title:
+          type: string
+        college:
+          type: string
+        education_level:
+          type: string
+          enum:
+            - Secondary School
+            - Undergrad
+            - Postgrad
+            - Prefer not to say
+        hometown:
+          type: string
+        search_range:
+          type: integer
+          format: int16
+          default: 20000
+        age_range:
+          $ref: '#/components/schemas/DateRangeUpdate'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReadDatingProfileAssessmentQuestion'
+    UpdateInterestTag:
+      type: object
+      properties:
+        icon:
+          type: string
+        category:
+          type: string
+    User:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+        email:
+          type: string
   securitySchemes:
     BearerAuth:
       type: http

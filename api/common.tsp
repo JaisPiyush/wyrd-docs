@@ -20,10 +20,14 @@ model ReadResponse<T> {
 alias ViewsetAuthorizedViewAPIErrors = UnauthorizedResponse | BadRequestResponse;
 alias ViewsetAuthorizedDetailViewAPIErrors = ViewsetAuthorizedViewAPIErrors | NotFoundResponse;
 
-@delete op DeleteResourceById<P extends string | integer, T>(@path pk: P): WriteSuccessfullResponse<void> | ViewsetAuthorizedDetailViewAPIErrors;
+alias ListResourcesResponse<T> = ReadResponse<T> | ViewsetAuthorizedViewAPIErrors;
+
+@delete op DeleteResourceById<P extends string | integer, T = void>(@path pk: P): {@statusCode code: 201;} | ViewsetAuthorizedDetailViewAPIErrors;
 
 @get op ReadResourceById<P extends string | integer, T>(@path pk: P): ReadResponse<T> | ViewsetAuthorizedDetailViewAPIErrors;
 @get op ListResources<T>(): ReadResponse<T> | ViewsetAuthorizedViewAPIErrors;
 
-@post op create<C, R>(@body body: C): WriteSuccessfullResponse<R> | ViewsetAuthorizedViewAPIErrors;
-@put op update<C, R>(@body body: C): WriteSuccessfullResponse<R> | ViewsetAuthorizedDetailViewAPIErrors;
+@post op CreateResource<C, R>(@body body: C): WriteSuccessfullResponse<R> | ViewsetAuthorizedViewAPIErrors;
+@patch op UpdateResourceById<P extends string | integer, C, R>(@path pk: P, @body body: C): WriteSuccessfullResponse<R> | ViewsetAuthorizedDetailViewAPIErrors;
+
+@patch op UpdateResource<C,R>(@body body: C): WriteSuccessfullResponse<R> | ViewsetAuthorizedDetailViewAPIErrors;
