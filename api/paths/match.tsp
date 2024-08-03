@@ -25,7 +25,7 @@ interface DatingRoomAPIView {
         @query("visibility") visibility?: "public" | "private" = "public",
         @query("name") name?: string,
         @query("is_participant") is_participant?: boolean = false,
-    ): ListResourcesResponse<ReadDatingRoom[]>;
+    ): CursorListResourcesResponse<ReadDatingRoom[]>;
 
     @doc("fetch detailed info about a particular dating room.")
     op read is ReadResourceById<int64, DetailReadDatingRoom>;
@@ -40,20 +40,24 @@ interface MatchingPoolAPIView {
     // op read is ReadResourceById<int64, ReadMatchingPool<"dr">>;
     
     @doc("join the matching pool. User can select matching pool of dating room, otherwise they will join common pool. It will return 400 on duplicate entry.")
-    @post op join(@body dating_room?: int64): WriteDetailResourceResponse<ReadMatchingPool>;
+    @post op join(@body body: {
+        dating_room?: int64
+    }): WriteDetailResourceResponse<ReadMatchingPool>;
     
     @doc("leave the matching pool.")
-    @delete op leave(@body dating_room?: int64): {@statusCode code: 201} | ViewsetAuthorizedDetailViewAPIErrors;
+    @delete op leave(@body body: {
+        dating_room?: int64
+    }): {@statusCode code: 202} | ViewsetAuthorizedDetailViewAPIErrors;
 
     @route("/room/{roomId}")
     @doc("get all the matching profiles in a dating room.")
-    @get getMatchingProfiles(@path roomId: string): ListResourcesResponse<ExposedReadDatingProfile[]>;
+    @get getMatchingProfiles(@path roomId: string): CursorListResourcesResponse<ExposedReadDatingProfile[]>;
 }
 
 @route("/pair")
 interface MatchingPairAPIView {
     @doc("fetch all the active pairs of the dating profile.")
-    op list is ListResources<MatchingPair[]>;
+    op list is CursorListResources<MatchingPair[]>;
 
     @route("/get-chat-token/")
     @doc("fetch chat token")

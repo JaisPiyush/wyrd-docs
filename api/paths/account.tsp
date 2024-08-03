@@ -24,7 +24,7 @@ op list is ListResources<ReadInterestTag[]>;
 @route("/profile/text_prompt/")
 interface DatingProfileTextPromptAPIView {
     @doc("fetch all text prompts")
-    op list is ListResources<ReadTextPrompt[]>;
+    op list is CursorListResources<ReadTextPrompt[]>;
 
     @doc("create a dating profile text prompt by user with answer.")
     op create is CreateResource<CreateDatingProfileTextPrompt, ReadDatingProfileTextPrompt>;
@@ -60,6 +60,18 @@ interface DatingProfileMediaAPIView {
 
 }
 
+@route("/profile/assesment-question/")
+interface DatingProfileAssessmentQuestionAPIView {
+    @doc("fetch all assessment questions.")
+    @get op list(@query("answered") answered?: boolean = false): CursorListResourcesResponse<ReadAssessmentQuestion[] | ReadDatingProfileAssessmentQuestion[]>;
+
+    @doc("answer assessment question")
+    op create is CreateResource<CreateDatingProfileAssessmentQuestion, ReadDatingProfileAssessmentQuestion>;
+
+    @doc("update answer of already answered question.")
+    op update is UpdateResourceById<int64, UpdateDatingProfileAssessmentQuestion, ReadDatingProfileAssessmentQuestion>;
+}
+
 
 @route("/profile")
 interface DatingProfileAPIView {
@@ -88,4 +100,18 @@ interface DatingProfileDatingPreferencesAPIView {
 
     @doc("update the dating preferences of the dating profile")
     op update is UpdateResource<DatingPreferencesDatingProfile, DatingPreferencesDatingProfile>;
+}
+
+
+@route("/profile/blocklist")
+interface BlockListAPIView{
+    @doc("fetch all blocked profile ")
+    op list is CursorListResources<ReadBlockList[]>;
+
+    @doc("block all the profiles.")
+    op create is CreateResource<CreateBlockList[], ReadBlockList[]>;
+
+    @doc("unblock the profiles")
+    @delete delete(@body body: CreateBlockList[]): {@statusCode code: 202;} | ViewsetAuthorizedDetailViewAPIErrors;
+
 }

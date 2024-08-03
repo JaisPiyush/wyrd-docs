@@ -12,7 +12,7 @@ namespace WyrdAPI.DatingRoomOrganizer;
 @route("")
 interface DatingRoomOrganizer {
     @doc("fetch all the dating room created by the organizer.")
-    op list is ListResources<ReadDatingRoom[]>;
+    op list is CursorListResources<ReadDatingRoom[]>;
 
     @doc("fetch a particular dating room with detailed information.")
     op read is ReadResourceById<int64, DetailReadDatingRoom>;

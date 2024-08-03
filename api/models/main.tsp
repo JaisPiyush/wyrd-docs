@@ -4,6 +4,8 @@ model User {
     // Phone number
     @key username: string;
     email?: string;
+    first_name?: string;
+    last_name?: string;
 }
 
 model DateRange {
@@ -81,7 +83,7 @@ model UpdateDatingRoomOrganizer {
 
 model InterestTag {
     @visibility("read")
-    @key id: int32;
+    @key pk: int32;
 
     @visibility("read", "create")
     tag: string;
@@ -123,7 +125,7 @@ enum AssessmentQuestionType {
  */
 model AssessmentQuestion {
     @visibility("read")
-    @key id: int32;
+    @key pk: int32;
 
     @visibility("read", "create", "update")
     question_type: AssessmentQuestionType;
@@ -154,11 +156,13 @@ model UpdateAssessmentQuestion {
 }
 
 model DatingProfileAssessmentQuestion {
-    @visibility("read", "create")
-    question: ReadAssessmentQuestion;
+    @visibility("read")
+    @key pk: int64;
+
+
 
     @visibility("create")
-    profile: DatingProfile;
+    profile: string;
 
     @visibility("read", "create", "update")
     answer: string;
@@ -172,12 +176,14 @@ model DatingProfileAssessmentQuestion {
 
 @withVisibility("read")
 model ReadDatingProfileAssessmentQuestion {
-    ...DatingProfileAssessmentQuestion
+    ...DatingProfileAssessmentQuestion,
+    question: ReadAssessmentQuestion;
 }
 
 @withVisibility("create")
 model CreateDatingProfileAssessmentQuestion {
-    ...DatingProfileAssessmentQuestion
+    ...DatingProfileAssessmentQuestion,
+    question_id: int32;
 }
 
 @withVisibility("update")
@@ -197,10 +203,10 @@ enum MediaContentType {
  */
 model DatingProfileContentMedia<T extends MediaContentType> {
     @visibility("read")
-    @key id: int32;
+    @key pk: int32;
 
     @visibility("create")
-    profile: DatingProfile;
+    profile: string;
 
     @visibility("read", "create",)
     content_type: T;
@@ -241,7 +247,7 @@ model UpdateDatingProfileContentMedia {
 
 model UpdateMediaPositions {
     new_positions: {
-        id: int32;
+        pk: int32;
         position: int8;
     }[];
 }
@@ -253,7 +259,7 @@ enum TextPromptCategory {
 
 model TextPrompt {
     @visibility("read")
-    @key id: int32;
+    @key pk: int32;
 
     @visibility("read", "create", "update")
     question: string;
@@ -279,13 +285,13 @@ model UpdateTextPrompt {
 
 model DatingProfileTextPrompt {
     @visibility("read")
-    @key id: int64;
+    @key pk: int64;
 
-    @visibility("read", "create")
-    prompt: ReadTextPrompt;
+    // @visibility("read", "create")
+    // prompt: ReadTextPrompt;
 
     @visibility("create")
-    profile: DatingProfile;
+    profile: string;
 
     @visibility("read", "create", "update")
     answer: string;
@@ -293,12 +299,14 @@ model DatingProfileTextPrompt {
 
 @withVisibility("read")
 model ReadDatingProfileTextPrompt {
-    ...DatingProfileTextPrompt
+    ...DatingProfileTextPrompt,
+    prompt: ReadTextPrompt;
 }
 
 @withVisibility("create")
 model CreateDatingProfileTextPrompt {
-    ...DatingProfileTextPrompt
+    ...DatingProfileTextPrompt,
+    prompt: int32;
 }
 
 @withVisibility("update")
@@ -468,7 +476,7 @@ model DatingProfile {
     @visibility("read", "update", "search_param")
     age_range: DateRange;
 
-    @visibility("update", "seo")
+    @visibility("hidden", "seo")
     questions: ReadDatingProfileAssessmentQuestion[];
 
     
@@ -530,6 +538,31 @@ model DatingPreferencesDatingProfile {
 }
 
 
+model BlockList {
+    @visibility("read")
+    @key pk: string;
+
+    @visibility("read", "create")
+    blocked_profile: MatchingPairDatingProfileInfo;
+
+    @visibility("hidden")
+    blocked_by: string;
+
+    @visibility("read")
+    created_at: utcDateTime;
+}
+
+@withVisibility("read")
+model ReadBlockList{
+    ...BlockList
+}
+
+@withVisibility("create")
+model CreateBlockList{
+    pk: string;
+}
+
+
 model ReadDatingProfileMatchingStatus {
     matching_quota: int16 = 5;
     matches_found_after_previous_cooldown: int16 = 0;
@@ -556,7 +589,7 @@ model ReadDatingProfileMatchingStatus {
  */
 model DatingRoom {
     @visibility("read", "search_param")
-    @key id: int64;
+    @key pk: int64;
 
 
     @visibility("detail_read")
@@ -705,18 +738,18 @@ model ArchivedMatchingPool {
     ...MatchingPool,
 
     @visibility("read")
-    @key id: int64;
+    @key pk: int64;
 }
 
 model MatchingPairDatingProfileInfo {
     avatar: string;
     name: string;
-    id: string;
+    pk: string;
 }
 
 
 model MatchingPair {
-    @key id: string;
+    @key pk: string;
     pairing_type: "rp" | "dr";
 
     profile_1: MatchingPairDatingProfileInfo;
@@ -760,7 +793,7 @@ enum MatchingPairProfileActivityType {
 
 model MatchingPairProfileActivity {
     @visibility("read")
-    @key id: int64;
+    @key pk: int64;
 
     @visibility("read")
     pair: int64;
@@ -865,7 +898,7 @@ model CreateMatchingPairProfileActivity {
 //     // Transfemine: "trans-femine",
 //     Transgender: "transgender",
 //     TwoSpirit: "two-spirit",
-//     GenderFluid: "gender-fluid",
+//     GenderFlupk "gender-fluid",
 //     GenderQuestioning: "gender-questioning",
 //     Genderqueer: "genderqueer",
 
@@ -924,7 +957,7 @@ model CreateMatchingPairProfileActivity {
 
 // model PromptQuestion {
 //     @visibility("read")
-//     id: string;
+//     pk string;
 //     @visibility("read", "admin-create", "admin-update")
 //     prompt: string;
 //     @visibility("read", "admin-create", "admin-update")
@@ -987,7 +1020,7 @@ model CreateMatchingPairProfileActivity {
 
 // model DatingProfileQuestionare {
 //     @visibility("read")
-//     id: int32;
+//     pk int32;
 //     @visibility("read", "admin-create", "admin-update")
 //     question: string;
 //     @visibility("read", "admin-create", "admin-update")
@@ -1189,7 +1222,7 @@ model CreateMatchingPairProfileActivity {
 
 // model DatingRoom {
 //     @visibility("read", "join")
-//     id: string;
+//     pk string;
 //     @visibility("read", "update")
 //     is_active: boolean;
 //     @visibility("read", "create", "update")
