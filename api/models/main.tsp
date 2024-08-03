@@ -202,16 +202,16 @@ model DatingProfileContentMedia<T extends MediaContentType> {
     @visibility("create")
     profile: DatingProfile;
 
-    @visibility("read", "create", "update")
+    @visibility("read", "create",)
     content_type: T;
 
-    @visibility("read", "create", "update")
+    @visibility("read", "create",)
     url: string;
 
-    @visibility("read", "create", "update")
+    @visibility("read", "create",)
     caption?: string;
 
-    @visibility("read", "create", "update")
+    @visibility("read", "create",)
     is_profile_picture: boolean = false;
 
     @visibility("read", "update")
@@ -237,6 +237,13 @@ model CreateDatingProfileContentMedia {
 @withVisibility("update")
 model UpdateDatingProfileContentMedia {
     ...DatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>
+}
+
+model UpdateMediaPositions {
+    new_positions: {
+        id: int32;
+        position: int8;
+    }[];
 }
 
 
