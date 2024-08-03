@@ -11,10 +11,12 @@ using TypeSpec.Rest;
 namespace WyrdAPI.MatchAPI;
 
 @route("/profile/status")
+@doc("fetch current roster matching status of the user. It contains details like button enable status and matching quotas.")
 op getProfileMatchingStatus is ListResources<ReadDatingProfileMatchingStatus>;
 
 @route("/dating_room")
 interface DatingRoomAPIView {
+    @doc("search & filter dating rooms.")
     @get op list(
         @query("id") id?: string,
         @query("is_active") is_active?: boolean = true,
@@ -24,7 +26,9 @@ interface DatingRoomAPIView {
         @query("name") name?: string,
         @query("is_participant") is_participant?: boolean = false,
     ): ListResourcesResponse<ReadDatingRoom[]>;
-    op read is ReadResourceById<string, DetailReadDatingRoom>;
+
+    @doc("fetch detailed info about a particular dating room.")
+    op read is ReadResourceById<int64, DetailReadDatingRoom>;
 
 }
 
@@ -48,9 +52,11 @@ interface MatchingPoolAPIView {
 
 @route("/pair")
 interface MatchingPairAPIView {
+    @doc("fetch all the active pairs of the dating profile.")
     op list is ListResources<MatchingPair[]>;
 
     @route("/get-chat-token/")
+    @doc("fetch chat token")
     @get op getChatToken(): {
         @body body: {
             token: string;
@@ -61,5 +67,6 @@ interface MatchingPairAPIView {
 
 @route("/pair/{id}/activity/")
 interface MatchingPairProfileAcitivityAPIView {
+    @doc("perform actions like profile exposure, accepting/rejecting relationship.")
     @post op create(@path id: string, @body data: CreateMatchingPairProfileActivity): WriteDetailResourceResponse<ReadMatchingPairProfileActivity>
 }
