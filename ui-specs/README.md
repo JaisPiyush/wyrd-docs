@@ -17,6 +17,27 @@ The primary objective of this document is to develop a flutter dating app that a
 - Join dating rooms and find matches.
 - Chat with dates.
 
+## Architecture
+
+1. Global blocs wrapping MaterialApp.
+    - AuthenticationBloc
+    - UserDatingProfileBloc
+    - RotaryMatchingAndMatchedPairBloc
+    - DatingRoomBloc
+2. **Activity**: A sequence of pages focused on particular task will be called an Activity.
+    - CreateProfileActivity
+    - MainActivity
+    - ProfileActivity
+    - DatingRoomActivity
+    - ChatActivity
+3. Local blocs will exists on Activity or Page levels.
+    - SearchDatingRoomsBloc
+    - EditDatingProfileBloc
+    - MatchedPairChatBloc
+    - UserBlockListBloc
+
+
+
 ## Features
 
 1. ### User Authentication
@@ -61,20 +82,145 @@ The primary objective of this document is to develop a flutter dating app that a
         
 
 ## Activities
+1. ### InitializationActivity
 
-1. ### Create Profile Activity
- - route
- - pages
- - state (Bloc state management)
+    **route**: /
+
+    #### Responsibilities
+    1. Check user is logged in, If not then start PhoneAuthenticationActivity.
+    2. Check user has a dating profile, If not then start CreateDatingProfileActivity.
+    3. Check user's dating profile completion score is above 60%, If not then start EditDatingProfileActivity.
+    4. If user was directed through a deeplink then push the deeplink navigation.
+    5. Start MainActivity.
+
+    #### Blocs used
+    - AuthenticationBloc
+    - UserDatingProfileBloc
+
+    The InitializationActivity widget will be `Splash` screen from Figma.
+
+    #### Implementation
+    - MultiBlocListener with all the bloc initializations and trigger navigation as required by states.
+    - For states:
+        - AuthenticationStateUserIsUnauthorized, it will navigate to [PhoneAuthenticationActivity](#phoneauthenticationactivity).
+        - AuthenticationStateAuthenticationCompleted, it will add `UserDatingProfileEventCheckDatingProfileStatus` event.
+        - 
+
+2. ### PhoneAuthenticationActivity
+    **route**: /auth
+    - PhoneActivity widget will be `walkthought` screen from Figma.
+    It contains 2 pages:
+    - PhoneNumberInputPage.
+    - PhoneVerificationCodeInputPage.
+3. ### CreateDatingProfileActivity
+4. ### MainActivity
+5. ### DatingRoomsActivity
+6. ### ProfileActivity
+
+
 
 ## Pages
 
-## Bloc
-1. ### CreateProfile Bloc
-- States
-- Events
+1. ### PhoneNumberInputPage
+    **route**: /auth/phone
+    The widget will be `Signup` page from figma.
+
+    #### Responsibilities
+    1. It will take phone number from user and validate the format of the phone number.
+    2. On next click it will fire bloc event for phone number authentication.
+
+    #### Implementation
+    The next button will be wrapped in a `BlocConsumer` widget, which will:
+
+    1. Listen for `AuthenticationStatePhoneNumberAuthenticationFailed` and display a snackbar.
+    2. In the builder, show a loading animation when in the `AuthenticationStateSendingVerificationCode` state; otherwise, display the normal button.
+    3. On the next button click, add the `AuthenticationEventSendVerificationCodeToPhoneNumber` event to the authentication bloc, with a callback to navigate to the `VerificationCodeInputPage`.
+
+    #### Blocs
+    - AuthenticationBloc
+
+2. ### VerificationCodeInputPage
+    **route**: /auth/code
+
+    #### Route arguments
+    1. String phoneNumber.
+    2. String verificationId.
+
+    #### Responsibilities
+    1. It will accept the code input.
+    2. Upon completing the input or by a manual click, it will automatically trigger the code verification event in the bloc.
+
+    #### Implementation
+    The widget will be the `verification` screen from Figma.
+
+    1. **Main Body:**
+    - The main body will be wrapped within a `BlocConsumer` of the `AuthenticationBloc`.
+    - It will listen for the `AuthenticationStatePhoneNumberAuthenticationFailed` state and display a snackbar when this state occurs.
+
+    2. **Timer:**
+    - The timer will be wrapped within a `BlocSelector` of the `AuthenticationBloc`.
+    - It will listen for the `AuthenticationStateWaitingForCodeInput` state and render the time.
+    - When the timer reaches zero, it will display a text button labeled 'resend'.
+
+    3. **Button:**
+    - The button will be wrapped within a `BlocConsumer` of the `AuthenticationBloc`.
+    - It will listen for the following states:
+        - `AuthenticationStatePhoneNumberAuthenticationFailed` to show a snackbar.
+        - `AuthenticationStateAuthenticationCompleted` to navigate back to `InitializationActivity`.
+
+    4. **On Click:**
+    - On click, the button will trigger the `AuthenticationEventVerifyCode` event in the `AuthenticationBloc`.
+    - It will also start displaying a loading animation.
+
 
 ## Widgets
+
+
+## Bloc
+
+1. ### AuthenticationBloc
+    ### Responsibilities
+    1. Check user login status.
+    2. Perform phone number authentication and log in the user on the backend.
+    3. Send the notification device token to the backend.
+    4. Retrieve and refresh the JWT token based on its expiry status.
+
+    ### Properties
+    - **String? jwt:** JWT token, either loaded from shared preferences or fetched from the backend.
+    - **[UserModel?](#usermodel) user:** Backend logged-in user.
+
+    ### States
+    1. **AuthenticationStateInitialization**
+    2. **AuthenticationStateCheckingAuthenticationStatus:** Bloc is checking user authentication status; show loading screen.
+    3. **AuthenticationStateUserIsUnauthorized:** Bloc has found the user to be unauthorized; the activity will redirect to the login page.
+    4. **AuthenticationStateAuthenticationCompleted:** Bloc approves the user's login status.
+    5. **AuthenticationStateSendingVerificationCode:** Bloc is requesting Firebase for a phone number authentication code (intentionally add a 5-second delay to show a small loading screen before moving to the next page for better UX).
+    6. **AuthenticationStateWaitingForCodeInput(Duration secondsLeft):** While sending the code for verification, the bloc sets a duration timer to update the countdown UI. When secondsLeft reaches 0, the UI should show a resend button. Use the [CountdownTimerController](#countdowntimercontroller) for creating a streaming ticker.
+    7. **AuthenticationStateWaitingForCodeVerification:** Bloc has sent the OTP code for verification and is waiting for a response.
+    8. **AuthenticationStatePhoneNumberAuthenticationFailed(String phoneNumber, [Exception e]):** Authentication of the phone number has failed.
+    9. **AuthenticationStatePhoneNumberAuthenticatedLogInBackend:** Phone authentication is complete, and the bloc has requested login on the backend.
+    10. **AuthenticationStateRefreshingJWTCredentials:** Bloc is refreshing the JWT token.
+
+    ### Events
+    1. **AuthenticationEventCheckAuthenticationStatus**
+    2. **AuthenticationEventSendVerificationCodeToPhoneNumber(String phoneNumber, Function(String verificationId) onCodeSent):** The event will call the Firebase function for phone number authentication and trigger the onCodeSent callback as soon as the code is sent.
+    3. **AuthenticationEventVerifyCode(String verificationId, String smsCode):** Send the verification code for manual verification.
+
+    #### Events
+2. ### UserDatingProfileBloc
+    #### Property
+    - [DatingProfile] profile
+    #### States
+    #### Events
+    1. UserDatingProfileEventCheckDatingProfileStatus.
+3. ### RotaryMatchingAndMatchedPairsBloc
+4. ### DatingRoomBloc
+5. ### SearchDatingRoomsBloc
+6. ### MatchedPairChatBloc
+7. ### UserBlocListBloc
+
+
+
 
 ## Modules
 
@@ -90,7 +236,7 @@ class FirebasePhoneAuthenticationModule {
         String phoneNumber,
         // Trigger on successful verification of phone number.
         // The method will also handle signing in on the backend system.
-        Future<void> Function(User user, Map<String, dynamic> metadata) verificationCompleted,
+        Future<void> Function(UserModel user, Map<String, dynamic> metadata) verificationCompleted,
         // Trigger after authentication service has sent the sms code. The callback
         // will transition the page to code input page.
         VoidCallback(String verificationId, int? resendToken) codeSent,
@@ -124,18 +270,29 @@ class FirebasePhoneAuthenticationModule {
 |------|-------------|
 |'invalid-phone-number'| Phone number was incorrect|
 
-### AuthenticationAPIModule
-```dart
-class AuthenticationAPIModule {
-    // login wyrd backend using [FirebaseUser]
-    // store the jwt returned by backend.
-    Future<void> loginWithFirebaseUser(FirebaseUser user) async {
-        final String idToken = await user.getIdToken();
-        // Implement backend login and return jwt
-    }
 
-    // Fetch logged in user from backend.
-    Future<User> getUser();
+
+### CountdownTimerController
+Create and control stream of countdown duration. The reason for creating this separate countdown timer controller is to handle countdown process during different states of app.
+
+For e.g a countdown timer, for resend button activation in OTP code verification, will be paused when the app goes into background and will resume from same time after app again comes back into foreground.
+
+```dart
+class CountdownTimerController {
+    final DateTime endTime;
+    final Function(Duration durationLeft) onTick;
+    const CountdownTimerController(this.endTime, this.onTick);
+
+    StreamSubscription<Duration> _subscription;
+    StreamController<Duration> _controller;
+
+    StreamSubscription<Duration> get subscription => _subscription;
+    StreamSubscription<Duration> get controller => _controller;
+
+    pause() {}
+    resume() {}
+    close() {}
+
 }
 ```
 
@@ -145,32 +302,57 @@ class AuthenticationAPIModule {
 
 ```dart
 class AuthenticationRepository {
-    
-    /*
-    * Return logged in [User] model.
-    * 
-    * Get [FirebaseUser] via `Firebase.instance.currentUser`
-    * If jwt doesn't exists, then call @method loginWithFirebaseUser
-    * Fetch current user from backend
-    * 
-    * Errors:
-    *   - firebase user is not logged in
-    *   - login error from backend 
-    *   - unauthorized server request to backend (401)
-    *
-    */
-    Future<User> getCurrentUser();
-
     // Make authorized request to backend for refreshing the jwt
     // Update the stored jwt in cookie and shared pref
-    Future<void> refreshBackendToken();
+    // API: `POST: /account/auth/token/refresh`
+    Future<String> refreshBackendToken(String refreshToken);
 
+    // idToken is unique identification token retrieved from firebase after authentication.
+    // API: `POST: /account/auth/login/phone`
+    Future<BackendLoginResponse> loginOnBackend(String idToken);
 
+    // API: `DELETE: /account/auth/logout`
+    Future<void> logoutFromBackend();
+
+    // API: `POST: /account/device/token`
+    Future<void> setDeviceToken(String deviceToken);
+}
+```
+
+### DatingProfileRepository
+
+```dart
+class DatingProfileRepository {
+
+    // API `GET: /account/profile`
+    Future<DatingProfile> getMyDatingProfile();
+}
+```
+
+### BackendUtilityRepository
+
+```dart
+class BackendUtilityRepository {
+
+    // API `GET: /account/interest-tags`
+    Future<List<InterestTag>> getAllInterestTags();
 }
 ```
 
 
 ## Models
+
+1. ### UserModel
+    See User schema from openAPI preview.
+2. ### BackendLoginResponse
+    See response of `POST: /account/auth/login/phone`.
+3. ### DatingProfile
+    See ReadDatingProfile schema.
+4. ### InterestTag
+    See ReadInterestTag schema.
+
+
+
 
 ## Appendix
 
@@ -182,4 +364,5 @@ class AuthenticationRepository {
 - latlong2
 - bloc
 - flutter_bloc
-- flutter_osm_plugin: location picking with Ola
+- flutter_osm_plugin
+- debounce_throttle: limiting autocomplete search request

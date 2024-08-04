@@ -20,9 +20,12 @@ paths:
                     type: string
                   refresh:
                     type: string
+                  user:
+                    $ref: '#/components/schemas/User'
                 required:
                   - access
                   - refresh
+                  - user
         '400':
           description: The server could not understand the request due to invalid syntax.
           content:
@@ -110,7 +113,7 @@ paths:
   /account/interest-tags:
     get:
       operationId: AccountAPI_list
-      description: fetch all interest tags for user.
+      description: fetch all interest tags.
       parameters: []
       responses:
         '200':
@@ -125,6 +128,34 @@ paths:
           description: The server could not understand the request due to invalid syntax.
         '401':
           description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+  /account/interest-tags/{pk}:
+    get:
+      operationId: AccountAPI_read
+      description: fech all interest tags selected by the user
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadInterestTag'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
   /account/profile:

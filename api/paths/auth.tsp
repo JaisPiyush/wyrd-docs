@@ -18,6 +18,7 @@ model PhoneLoginBody {
     @body data: {
         access: string;
         refresh: string;
+        user: User;
     };
     @statusCode statusCode: 201;
 }| InvalidPhoneAuthenticationTokenError | NotFoundResponse;

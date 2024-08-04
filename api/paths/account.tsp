@@ -11,8 +11,12 @@ using TypeSpec.Rest;
 namespace WyrdAPI.AccountAPI;
 
 @route("/interest-tags")
-@doc("fetch all interest tags for user.")
+@doc("fetch all interest tags.")
 op list is ListResources<ReadInterestTag[]>;
+
+@route("/interest-tags")
+@doc("fech all interest tags selected by the user")
+op read is ReadResourceById<int32, ReadInterestTag[]>;
 
 @route("/device/token")
 @doc("set FCM device token for notification")
