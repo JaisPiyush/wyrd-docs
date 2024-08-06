@@ -53,8 +53,8 @@ paths:
       description: logout user in backend and remove device token
       parameters: []
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
         '400':
           description: The server could not understand the request due to invalid syntax.
       security:
@@ -108,54 +108,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SetDeviceCloudMessagingTokenModel'
-      security:
-        - BearerAuth: []
-  /account/interest-tags:
-    get:
-      operationId: AccountAPI_list
-      description: fetch all interest tags.
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ReadInterestTag'
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-      security:
-        - BearerAuth: []
-  /account/interest-tags/{pk}:
-    get:
-      operationId: AccountAPI_read
-      description: fech all interest tags selected by the user
-      parameters:
-        - name: pk
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ReadInterestTag'
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-        '404':
-          description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
   /account/profile:
@@ -224,17 +176,11 @@ paths:
               $ref: '#/components/schemas/UpdateDatingProfile'
       security:
         - BearerAuth: []
-  /account/profile/assesment-question:
+  /account/profile/assessment-question:
     get:
       operationId: DatingProfileAssessmentQuestionAPIView_list
-      description: fetch all assessment questions.
-      parameters:
-        - name: answered
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: false
+      description: fetch all assessment questions answered byt the user.
+      parameters: []
       responses:
         '200':
           description: The request has succeeded.
@@ -252,13 +198,9 @@ paths:
                     nullable: true
                     default: null
                   results:
-                    anyOf:
-                      - type: array
-                        items:
-                          $ref: '#/components/schemas/ReadAssessmentQuestion'
-                      - type: array
-                        items:
-                          $ref: '#/components/schemas/ReadDatingProfileAssessmentQuestion'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReadDatingProfileAssessmentQuestion'
                 required:
                   - next
                   - previous
@@ -292,7 +234,7 @@ paths:
               $ref: '#/components/schemas/CreateDatingProfileAssessmentQuestion'
       security:
         - BearerAuth: []
-  /account/profile/assesment-question/{pk}:
+  /account/profile/assessment-question/{pk}:
     patch:
       operationId: DatingProfileAssessmentQuestionAPIView_update
       description: update answer of already answered question.
@@ -450,6 +392,34 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DatingPreferencesDatingProfileUpdate'
+      security:
+        - BearerAuth: []
+  /account/profile/interest-tags/{pk}:
+    get:
+      operationId: AccountAPI_read
+      description: fech all interest tags selected by the user
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadInterestTag'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
   /account/profile/media:
@@ -819,6 +789,133 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
+  /common/assessment_question:
+    get:
+      operationId: CommonAPI_listAssessmentQuestion
+      parameters:
+        - name: question
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: question_type
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/AssessmentQuestionType'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next:
+                    type: string
+                    nullable: true
+                    default: null
+                  previous:
+                    type: string
+                    nullable: true
+                    default: null
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReadAssessmentQuestion'
+                required:
+                  - next
+                  - previous
+                  - results
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+  /common/interest-tag:
+    get:
+      operationId: CommonAPI_listInterestTags
+      parameters:
+        - name: tag
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next:
+                    type: string
+                    nullable: true
+                    default: null
+                  previous:
+                    type: string
+                    nullable: true
+                    default: null
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReadInterestTag'
+                required:
+                  - next
+                  - previous
+                  - results
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+  /common/text_prompt:
+    get:
+      operationId: CommonAPI_listTextPrompt
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/TextPromptCategory'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next:
+                    type: string
+                    nullable: true
+                    default: null
+                  previous:
+                    type: string
+                    nullable: true
+                    default: null
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReadTextPrompt'
+                required:
+                  - next
+                  - previous
+                  - results
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
   /match/dating_room:
     get:
       operationId: DatingRoomAPIView_list
@@ -1144,49 +1241,6 @@ paths:
       security:
         - BearerAuth: []
   /superuser/assessment_question:
-    get:
-      operationId: AssessmentQuestionAPIView_list
-      parameters:
-        - name: question
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: question_type
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/AssessmentQuestionType'
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  next:
-                    type: string
-                    nullable: true
-                    default: null
-                  previous:
-                    type: string
-                    nullable: true
-                    default: null
-                  results:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReadAssessmentQuestion'
-                required:
-                  - next
-                  - previous
-                  - results
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-      security:
-        - BearerAuth: []
     post:
       operationId: AssessmentQuestionAPIView_create
       parameters: []
@@ -1354,49 +1408,6 @@ paths:
       security:
         - BearerAuth: []
   /superuser/interest-tag:
-    get:
-      operationId: InterestTagAPIView_list
-      parameters:
-        - name: tag
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: category
-          in: query
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  next:
-                    type: string
-                    nullable: true
-                    default: null
-                  previous:
-                    type: string
-                    nullable: true
-                    default: null
-                  results:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReadInterestTag'
-                required:
-                  - next
-                  - previous
-                  - results
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-      security:
-        - BearerAuth: []
     post:
       operationId: InterestTagAPIView_create
       parameters: []
@@ -1492,44 +1503,6 @@ paths:
       security:
         - BearerAuth: []
   /superuser/text_prompt:
-    get:
-      operationId: TextPromptAPIView_list
-      parameters:
-        - name: category
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/TextPromptCategory'
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  next:
-                    type: string
-                    nullable: true
-                    default: null
-                  previous:
-                    type: string
-                    nullable: true
-                    default: null
-                  results:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReadTextPrompt'
-                required:
-                  - next
-                  - previous
-                  - results
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-      security:
-        - BearerAuth: []
     post:
       operationId: TextPromptAPIView_create
       parameters: []

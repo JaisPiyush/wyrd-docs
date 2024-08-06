@@ -11,7 +11,6 @@ namespace WyrdAPI.SuperUserAPI;
 
 @route("/interest-tag/")
 interface InterestTagAPIView {
-    op list(@query("tag") tag?: string, @query("category") category?: string): CursorListResourcesResponse<ReadInterestTag[]>;
     op read is ReadResourceById<string, ReadInterestTag>;
     op create is CreateResource<CreateInterestTag, ReadInterestTag>;
     op update is UpdateResourceById<string, UpdateInterestTag, ReadInterestTag>;
@@ -28,7 +27,7 @@ interface DatingRoomOrganizerAPIView {
 
 @route("/assessment_question/")
 interface AssessmentQuestionAPIView {
-    op list(@query("question") question?: string, @query("question_type") question_type?: AssessmentQuestionType): CursorListResourcesResponse<ReadAssessmentQuestion[]>;
+    // op list(@query("question") question?: string, @query("question_type") question_type?: AssessmentQuestionType): CursorListResourcesResponse<ReadAssessmentQuestion[]>;
     op create is CreateResource<CreateAssessmentQuestion, ReadAssessmentQuestion>;
     op read is ReadResourceById<int32, ReadAssessmentQuestion>;
     op delete is DeleteResourceById<int32>;
@@ -37,7 +36,7 @@ interface AssessmentQuestionAPIView {
 
 @route("/text_prompt/")
 interface TextPromptAPIView {
-    op list(@query("category") category?: TextPromptCategory): CursorListResourcesResponse<ReadTextPrompt[]>;
+    // op list(@query("category") category?: TextPromptCategory): CursorListResourcesResponse<ReadTextPrompt[]>;
     op create is CreateResource<CreateTextPrompt, ReadTextPrompt>;
     op read is ReadResourceById<int32, ReadTextPrompt>;
     op delete is DeleteResourceById<int32>;

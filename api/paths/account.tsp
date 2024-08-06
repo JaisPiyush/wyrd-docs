@@ -10,11 +10,11 @@ using TypeSpec.Rest;
 
 namespace WyrdAPI.AccountAPI;
 
-@route("/interest-tags")
-@doc("fetch all interest tags.")
-op list is ListResources<ReadInterestTag[]>;
+// @route("/interest-tags")
+// @doc("fetch all interest tags.")
+// op list is ListResources<ReadInterestTag[]>;
 
-@route("/interest-tags")
+@route("/profile/interest-tags")
 @doc("fech all interest tags selected by the user")
 op read is ReadResourceById<int32, ReadInterestTag[]>;
 
@@ -64,11 +64,12 @@ interface DatingProfileMediaAPIView {
 
 }
 
-@route("/profile/assesment-question/")
+@route("/profile/assessment-question/")
 interface DatingProfileAssessmentQuestionAPIView {
-    @doc("fetch all assessment questions.")
-    @get op list(@query("answered") answered?: boolean = false): CursorListResourcesResponse<ReadAssessmentQuestion[] | ReadDatingProfileAssessmentQuestion[]>;
+    @doc("fetch all assessment questions answered byt the user.")
+    @get op list(): CursorListResourcesResponse<ReadDatingProfileAssessmentQuestion[]>;
 
+    
     @doc("answer assessment question")
     op create is CreateResource<CreateDatingProfileAssessmentQuestion, ReadDatingProfileAssessmentQuestion>;
 

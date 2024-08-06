@@ -36,5 +36,5 @@ model PhoneLoginBody {
 @useAuth(BearerAuth)
 @doc("logout user in backend and remove device token")
 @delete op logout(): {
-    @statusCode status: 201 | 400;
+    @statusCode status: 202 | 400;
 };

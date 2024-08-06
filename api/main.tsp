@@ -27,6 +27,12 @@ namespace WyrdAPI {
     
   }
 
+  @route("/common")
+  @useAuth(BearerAuth)
+  namespace CommonAPI {
+    
+  }
+
   
 
   @route("/match")
