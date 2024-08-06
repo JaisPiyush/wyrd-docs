@@ -916,109 +916,6 @@ paths:
           description: Access is unauthorized.
       security:
         - BearerAuth: []
-  /match/dating_room:
-    get:
-      operationId: DatingRoomAPIView_list
-      description: search & filter dating rooms.
-      parameters:
-        - name: id
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: is_active
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: true
-        - name: location
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: start_date
-          in: query
-          required: false
-          schema:
-            type: string
-            format: date
-        - name: visibility
-          in: query
-          required: false
-          schema:
-            type: string
-            enum:
-              - public
-              - private
-            default: public
-        - name: name
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: is_participant
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: false
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  next:
-                    type: string
-                    nullable: true
-                    default: null
-                  previous:
-                    type: string
-                    nullable: true
-                    default: null
-                  results:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReadDatingRoom'
-                required:
-                  - next
-                  - previous
-                  - results
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-      security:
-        - BearerAuth: []
-  /match/dating_room/{pk}:
-    get:
-      operationId: DatingRoomAPIView_read
-      description: fetch detailed info about a particular dating room.
-      parameters:
-        - name: pk
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DetailReadDatingRoom'
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-        '404':
-          description: The server cannot find the requested resource.
-      security:
-        - BearerAuth: []
   /match/pair:
     get:
       operationId: MatchingPairAPIView_list
@@ -1240,6 +1137,259 @@ paths:
           description: Access is unauthorized.
       security:
         - BearerAuth: []
+  /room:
+    get:
+      operationId: DatingRoomAPIView_list
+      description: search & filter dating rooms.
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: is_active
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: location
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: visibility
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - public
+              - private
+            default: public
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: is_participant
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next:
+                    type: string
+                    nullable: true
+                    default: null
+                  previous:
+                    type: string
+                    nullable: true
+                    default: null
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReadDatingRoom'
+                required:
+                  - next
+                  - previous
+                  - results
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+  /room/organizer/room:
+    get:
+      operationId: DatingRoomOrganizer_list
+      description: fetch all the dating room created by the organizer.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next:
+                    type: string
+                    nullable: true
+                    default: null
+                  previous:
+                    type: string
+                    nullable: true
+                    default: null
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReadDatingRoom'
+                required:
+                  - next
+                  - previous
+                  - results
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: DatingRoomOrganizer_create
+      description: create a dating room.
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailReadDatingRoom'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatingRoom'
+      security:
+        - BearerAuth: []
+  /room/organizer/room/{pk}:
+    get:
+      operationId: DatingRoomOrganizer_read
+      description: fetch a particular dating room with detailed information.
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailReadDatingRoom'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    patch:
+      operationId: DatingRoomOrganizer_update
+      description: update dating room fields.
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailReadDatingRoom'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDatingRoom'
+      security:
+        - BearerAuth: []
+  /room/organizer/room/{roomId}/stats/participants:
+    get:
+      operationId: DatingRoomOrganizer_getParticipantsStats
+      description: fetch participants related stats of a dating room.
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomParticipantsStats'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+  /room/{pk}:
+    get:
+      operationId: DatingRoomAPIView_read
+      description: fetch detailed info about a particular dating room.
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailReadDatingRoom'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
   /superuser/assessment-question:
     post:
       operationId: AssessmentQuestionAPIView_create
@@ -1297,105 +1447,6 @@ paths:
           schema:
             type: integer
             format: int32
-      responses:
-        '202':
-          description: The request has been accepted for processing, but processing has not yet completed.
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-        '404':
-          description: The server cannot find the requested resource.
-      security:
-        - BearerAuth: []
-  /superuser/dating-room/organizer:
-    get:
-      operationId: DatingRoomOrganizerAPIView_list
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  next:
-                    type: string
-                    nullable: true
-                    default: null
-                  previous:
-                    type: string
-                    nullable: true
-                    default: null
-                  results:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReadDatingRoomOrganizer'
-                required:
-                  - next
-                  - previous
-                  - results
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-      security:
-        - BearerAuth: []
-    post:
-      operationId: DatingRoomOrganizerAPIView_create
-      parameters: []
-      responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReadDatingRoomOrganizer'
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateDatingRoomOrganizer'
-      security:
-        - BearerAuth: []
-  /superuser/dating-room/organizer/{pk}:
-    get:
-      operationId: DatingRoomOrganizerAPIView_read
-      parameters:
-        - name: pk
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReadDatingRoomOrganizer'
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-        '404':
-          description: The server cannot find the requested resource.
-      security:
-        - BearerAuth: []
-    delete:
-      operationId: DatingRoomOrganizerAPIView_delete
-      parameters:
-        - name: pk
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '202':
           description: The request has been accepted for processing, but processing has not yet completed.
@@ -1485,6 +1536,105 @@ paths:
         - BearerAuth: []
     delete:
       operationId: InterestTagAPIView_delete
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+  /superuser/room/organizer:
+    get:
+      operationId: DatingRoomOrganizerAPIView_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next:
+                    type: string
+                    nullable: true
+                    default: null
+                  previous:
+                    type: string
+                    nullable: true
+                    default: null
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReadDatingRoomOrganizer'
+                required:
+                  - next
+                  - previous
+                  - results
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      security:
+        - BearerAuth: []
+    post:
+      operationId: DatingRoomOrganizerAPIView_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingRoomOrganizer'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatingRoomOrganizer'
+      security:
+        - BearerAuth: []
+  /superuser/room/organizer/{pk}:
+    get:
+      operationId: DatingRoomOrganizerAPIView_read
+      parameters:
+        - name: pk
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingRoomOrganizer'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    delete:
+      operationId: DatingRoomOrganizerAPIView_delete
       parameters:
         - name: pk
           in: path
@@ -1711,6 +1861,65 @@ components:
         prompt:
           type: integer
           format: int32
+    CreateDatingRoom:
+      type: object
+      required:
+        - start_date
+        - start_time
+        - visibility
+        - entry_code_type
+        - name
+        - description
+        - banner
+        - images
+      properties:
+        search_distance_range:
+          type: integer
+          format: int32
+          default: 20000
+        location:
+          $ref: '#/components/schemas/GeoPoint'
+        venue_name:
+          type: string
+        venue_address:
+          type: string
+        start_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        end_date:
+          type: string
+          format: date
+        end_time:
+          type: string
+          format: time
+        visibility:
+          type: string
+          enum:
+            - public
+            - private
+        entry_code_type:
+          type: string
+          enum:
+            - cc
+            - ucpu
+          description: 'cc: Common code. ucpu: Unique code per user.'
+        name:
+          type: string
+        description:
+          type: string
+        banner:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        terms_and_conditions:
+          type: array
+          items:
+            type: string
     CreateDatingRoomOrganizer:
       type: object
       required:
@@ -1825,6 +2034,54 @@ components:
           default: 20000
         age_range:
           $ref: '#/components/schemas/DateRangeUpdate'
+    DatingRoomParticipantsStats:
+      type: object
+      required:
+        - start_date
+        - total_participants
+        - male_participants
+        - female_participants
+        - other_participants
+        - age_stats
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        total_participants:
+          type: integer
+          format: int64
+        male_participants:
+          type: integer
+          format: int64
+        female_participants:
+          type: integer
+          format: int64
+        other_participants:
+          type: integer
+          format: int64
+        age_stats:
+          type: object
+          properties:
+            age_19_24:
+              type: integer
+              format: int64
+            age_25_34:
+              type: integer
+              format: int64
+            age_35_44:
+              type: integer
+              format: int64
+            age_45_:
+              type: integer
+              format: int64
+          required:
+            - age_19_24
+            - age_25_34
+            - age_35_44
+            - age_45_
     DetailReadDatingRoom:
       type: object
       required:
@@ -2838,6 +3095,52 @@ components:
       properties:
         answer:
           type: string
+    UpdateDatingRoom:
+      type: object
+      properties:
+        search_distance_range:
+          type: integer
+          format: int32
+          default: 20000
+        location:
+          $ref: '#/components/schemas/GeoPointUpdate'
+        venue_name:
+          type: string
+        venue_address:
+          type: string
+        start_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        end_date:
+          type: string
+          format: date
+        end_time:
+          type: string
+          format: time
+        visibility:
+          type: string
+          enum:
+            - public
+            - private
+        name:
+          type: string
+        description:
+          type: string
+        banner:
+          type: string
+        common_code:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        terms_and_conditions:
+          type: array
+          items:
+            type: string
     UpdateInterestTag:
       type: object
       properties:

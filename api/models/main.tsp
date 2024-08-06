@@ -821,7 +821,7 @@ model CreateMatchingPairProfileActivity {
 
 
 // /**
-//  * The InterestTags model stores interest tags and their associated vector embeddings. 
+//  * The InterestTag model stores interest tags and their associated vector embeddings. 
 //  * These tags represent various interests that users can select, 
 //  * and the vector embeddings are used to find people with similar interests.
 //  * 

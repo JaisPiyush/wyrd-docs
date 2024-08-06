@@ -14,23 +14,7 @@ namespace WyrdAPI.MatchAPI;
 @doc("fetch current roster matching status of the user. It contains details like button enable status and matching quotas.")
 op getProfileMatchingStatus is ListResources<ReadDatingProfileMatchingStatus>;
 
-@route("/dating_room")
-interface DatingRoomAPIView {
-    @doc("search & filter dating rooms.")
-    @get op list(
-        @query("id") id?: string,
-        @query("is_active") is_active?: boolean = true,
-        @query("location") location?: string;
-        @query("start_date") start_date?: plainDate,
-        @query("visibility") visibility?: "public" | "private" = "public",
-        @query("name") name?: string,
-        @query("is_participant") is_participant?: boolean = false,
-    ): CursorListResourcesResponse<ReadDatingRoom[]>;
 
-    @doc("fetch detailed info about a particular dating room.")
-    op read is ReadResourceById<int64, DetailReadDatingRoom>;
-
-}
 
 @route("/pool")
 interface MatchingPoolAPIView {

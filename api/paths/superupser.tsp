@@ -17,7 +17,7 @@ interface InterestTagAPIView {
     op delete is DeleteResourceById<string>;
 }
 
-@route("/dating-room/organizer/")
+@route("/room/organizer/")
 interface DatingRoomOrganizerAPIView {
     op list is CursorListResources<ReadDatingRoomOrganizer[]>;
     op read is ReadResourceById<string, ReadDatingRoomOrganizer>;

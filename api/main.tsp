@@ -33,7 +33,9 @@ namespace WyrdAPI {
     
   }
 
-  
+  @route("/room")
+  @useAuth(BearerAuth)
+  namespace RoomAPI {}
 
   @route("/match")
   @useAuth(BearerAuth)
