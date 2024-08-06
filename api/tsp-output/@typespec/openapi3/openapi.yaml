@@ -351,7 +351,7 @@ paths:
                 $ref: '#/components/schemas/CreateBlockList'
       security:
         - BearerAuth: []
-  /account/profile/dating_preferences:
+  /account/profile/dating-preferences:
     get:
       operationId: DatingProfileDatingPreferencesAPIView_list
       description: fetch the dating preferences of the dating profile.
@@ -623,7 +623,7 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
-  /account/profile/text_prompt:
+  /account/profile/text-prompt:
     get:
       operationId: DatingProfileTextPromptAPIView_list
       description: fetch all text prompts
@@ -681,7 +681,7 @@ paths:
               $ref: '#/components/schemas/CreateDatingProfileTextPrompt'
       security:
         - BearerAuth: []
-  /account/profile/text_prompt/{pk}:
+  /account/profile/text-prompt/{pk}:
     get:
       operationId: DatingProfileTextPromptAPIView_read
       description: fetch all the dating profile text prompts.
@@ -789,7 +789,7 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
-  /common/assessment_question:
+  /common/assessment-question:
     get:
       operationId: CommonAPI_listAssessmentQuestion
       parameters:
@@ -877,7 +877,7 @@ paths:
           description: Access is unauthorized.
       security:
         - BearerAuth: []
-  /common/text_prompt:
+  /common/text-prompt:
     get:
       operationId: CommonAPI_listTextPrompt
       parameters:
@@ -1240,7 +1240,7 @@ paths:
           description: Access is unauthorized.
       security:
         - BearerAuth: []
-  /superuser/assessment_question:
+  /superuser/assessment-question:
     post:
       operationId: AssessmentQuestionAPIView_create
       parameters: []
@@ -1263,7 +1263,7 @@ paths:
               $ref: '#/components/schemas/CreateAssessmentQuestion'
       security:
         - BearerAuth: []
-  /superuser/assessment_question/{pk}:
+  /superuser/assessment-question/{pk}:
     get:
       operationId: AssessmentQuestionAPIView_read
       parameters:
@@ -1308,7 +1308,7 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
-  /superuser/dating_room/organizer:
+  /superuser/dating-room/organizer:
     get:
       operationId: DatingRoomOrganizerAPIView_list
       parameters: []
@@ -1364,7 +1364,7 @@ paths:
               $ref: '#/components/schemas/CreateDatingRoomOrganizer'
       security:
         - BearerAuth: []
-  /superuser/dating_room/organizer/{pk}:
+  /superuser/dating-room/organizer/{pk}:
     get:
       operationId: DatingRoomOrganizerAPIView_read
       parameters:
@@ -1502,7 +1502,7 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
-  /superuser/text_prompt:
+  /superuser/text-prompt:
     post:
       operationId: TextPromptAPIView_create
       parameters: []
@@ -1525,7 +1525,7 @@ paths:
               $ref: '#/components/schemas/CreateTextPrompt'
       security:
         - BearerAuth: []
-  /superuser/text_prompt/{pk}:
+  /superuser/text-prompt/{pk}:
     get:
       operationId: TextPromptAPIView_read
       parameters:

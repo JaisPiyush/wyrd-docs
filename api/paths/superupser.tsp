@@ -17,7 +17,7 @@ interface InterestTagAPIView {
     op delete is DeleteResourceById<string>;
 }
 
-@route("/dating_room/organizer/")
+@route("/dating-room/organizer/")
 interface DatingRoomOrganizerAPIView {
     op list is CursorListResources<ReadDatingRoomOrganizer[]>;
     op read is ReadResourceById<string, ReadDatingRoomOrganizer>;
@@ -25,7 +25,7 @@ interface DatingRoomOrganizerAPIView {
     op delete is DeleteResourceById<string>;
 }
 
-@route("/assessment_question/")
+@route("/assessment-question/")
 interface AssessmentQuestionAPIView {
     // op list(@query("question") question?: string, @query("question_type") question_type?: AssessmentQuestionType): CursorListResourcesResponse<ReadAssessmentQuestion[]>;
     op create is CreateResource<CreateAssessmentQuestion, ReadAssessmentQuestion>;
@@ -34,7 +34,7 @@ interface AssessmentQuestionAPIView {
 }
 
 
-@route("/text_prompt/")
+@route("/text-prompt/")
 interface TextPromptAPIView {
     // op list(@query("category") category?: TextPromptCategory): CursorListResourcesResponse<ReadTextPrompt[]>;
     op create is CreateResource<CreateTextPrompt, ReadTextPrompt>;

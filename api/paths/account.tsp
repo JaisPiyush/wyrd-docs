@@ -25,7 +25,7 @@ op read is ReadResourceById<int32, ReadInterestTag[]>;
 };
 
 
-@route("/profile/text_prompt/")
+@route("/profile/text-prompt/")
 interface DatingProfileTextPromptAPIView {
     @doc("fetch all text prompts")
     op list is CursorListResources<ReadTextPrompt[]>;
@@ -98,7 +98,7 @@ interface DatingProfileAPIView {
     op update is UpdateResource<UpdateDatingProfile, ReadDatingProfile>;
 }
 
-@route("/profile/dating_preferences")
+@route("/profile/dating-preferences")
 interface DatingProfileDatingPreferencesAPIView {
     @doc("fetch the dating preferences of the dating profile.")
     op list is ListResources<DatingPreferencesDatingProfile>;
