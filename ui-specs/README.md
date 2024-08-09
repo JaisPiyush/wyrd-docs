@@ -32,7 +32,6 @@ The primary objective of this document is to develop a flutter dating app that a
     - ChatActivity
 3. Local blocs will exists on Activity or Page levels.
     - SearchDatingRoomsBloc
-    - EditDatingProfileBloc
     - MatchedPairChatBloc
     - UserBlockListBloc
 
@@ -132,9 +131,9 @@ The primary objective of this document is to develop a flutter dating app that a
     #### Implementation
     The next button will be wrapped in a `BlocConsumer` widget, which will:
 
-    1. Listen for `AuthenticationStatePhoneNumberAuthenticationFailed` and display a snackbar.
-    2. In the builder, show a loading animation when in the `AuthenticationStateSendingVerificationCode` state; otherwise, display the normal button.
-    3. On the next button click, add the `AuthenticationEventSendVerificationCodeToPhoneNumber` event to the authentication bloc, with a callback to navigate to the `VerificationCodeInputPage`.
+    1. Listen for `PhoneNumberAuthenticationFailedAuthenticationState` and display a snackbar.
+    2. In the builder, show a loading animation when in the `SendingVerificationCodeAuthenticationState` state; otherwise, display the normal button.
+    3. On the next button click, add the `SendVerificationCodeToPhoneNumberAuthenticationEvent` event to the authentication bloc, with a callback to navigate to the `VerificationCodeInputPage`.
 
     #### Blocs
     - AuthenticationBloc
@@ -155,21 +154,21 @@ The primary objective of this document is to develop a flutter dating app that a
 
     1. **Main Body:**
     - The main body will be wrapped within a `BlocConsumer` of the `AuthenticationBloc`.
-    - It will listen for the `AuthenticationStatePhoneNumberAuthenticationFailed` state and display a snackbar when this state occurs.
+    - It will listen for the `ePhoneNumberAuthenticationFailedAuthenticationStat` state and display a snackbar when this state occurs.
 
     2. **Timer:**
     - The timer will be wrapped within a `BlocSelector` of the `AuthenticationBloc`.
-    - It will listen for the `AuthenticationStateWaitingForCodeInput` state and render the time.
+    - It will listen for the `WaitingForCodeInputAuthenticationState` state and render the time.
     - When the timer reaches zero, it will display a text button labeled 'resend'.
 
     3. **Button:**
     - The button will be wrapped within a `BlocConsumer` of the `AuthenticationBloc`.
     - It will listen for the following states:
-        - `AuthenticationStatePhoneNumberAuthenticationFailed` to show a snackbar.
-        - `AuthenticationStateAuthenticationCompleted` to navigate back to `InitializationActivity`.
+        - `PhoneNumberAuthenticationFailedAuthenticationState` to show a snackbar.
+        - `AuthenticationCompletedAuthenticationState` to navigate back to `InitializationActivity`.
 
     4. **On Click:**
-    - On click, the button will trigger the `AuthenticationEventVerifyCode` event in the `AuthenticationBloc`.
+    - On click, the button will trigger the `VerifyCodeAuthenticationEvent` event in the `AuthenticationBloc`.
     - It will also start displaying a loading animation.
 
 
@@ -190,29 +189,38 @@ The primary objective of this document is to develop a flutter dating app that a
     - **[UserModel?](#usermodel) user:** Backend logged-in user.
 
     ### States
-    1. **AuthenticationStateInitialization**
-    2. **AuthenticationStateCheckingAuthenticationStatus:** Bloc is checking user authentication status; show loading screen.
-    3. **AuthenticationStateUserIsUnauthorized:** Bloc has found the user to be unauthorized; the activity will redirect to the login page.
-    4. **AuthenticationStateAuthenticationCompleted:** Bloc approves the user's login status.
-    5. **AuthenticationStateSendingVerificationCode:** Bloc is requesting Firebase for a phone number authentication code (intentionally add a 5-second delay to show a small loading screen before moving to the next page for better UX).
-    6. **AuthenticationStateWaitingForCodeInput(Duration secondsLeft):** While sending the code for verification, the bloc sets a duration timer to update the countdown UI. When secondsLeft reaches 0, the UI should show a resend button. Use the [CountdownTimerController](#countdowntimercontroller) for creating a streaming ticker.
-    7. **AuthenticationStateWaitingForCodeVerification:** Bloc has sent the OTP code for verification and is waiting for a response.
-    8. **AuthenticationStatePhoneNumberAuthenticationFailed(String phoneNumber, [Exception e]):** Authentication of the phone number has failed.
-    9. **AuthenticationStatePhoneNumberAuthenticatedLogInBackend:** Phone authentication is complete, and the bloc has requested login on the backend.
-    10. **AuthenticationStateRefreshingJWTCredentials:** Bloc is refreshing the JWT token.
+    1. **InitializationAuthenticationState**
+    2. **CheckingAuthenticationStatusAuthenticationState:** Bloc is checking user authentication status; show loading screen.
+    3. **UserIsUnauthorizedAuthenticationState:** Bloc has found the user to be unauthorized; the activity will redirect to the login page.
+    4. **AuthenticationCompletedAuthenticationState:** Bloc approves the user's login status.
+    5. **SendingVerificationCodeAuthenticationState:** Bloc is requesting Firebase for a phone number authentication code (intentionally add a 5-second delay to show a small loading screen before moving to the next page for better UX).
+    6. **WaitingForCodeInputAuthenticationState(Duration secondsLeft):** While sending the code for verification, the bloc sets a duration timer to update the countdown UI. When secondsLeft reaches 0, the UI should show a resend button. Use the [CountdownTimerController](#countdowntimercontroller) for creating a streaming ticker.
+    7. **WaitingForCodeVerificationAuthenticationState:** Bloc has sent the OTP code for verification and is waiting for a response.
+    8. **PhoneNumberAuthenticationFailedAuthenticationState(String phoneNumber, [Exception e]):** Authentication of the phone number has failed.
+    9. **PhoneNumberAuthenticatedLogInBackendAuthenticationState:** Phone authentication is complete, and the bloc has requested login on the backend.
+    10. **RefreshingJWTCredentialsAuthenticationState:** Bloc is refreshing the JWT token.
 
     ### Events
-    1. **AuthenticationEventCheckAuthenticationStatus**
-    2. **AuthenticationEventSendVerificationCodeToPhoneNumber(String phoneNumber, Function(String verificationId) onCodeSent):** The event will call the Firebase function for phone number authentication and trigger the onCodeSent callback as soon as the code is sent.
-    3. **AuthenticationEventVerifyCode(String verificationId, String smsCode):** Send the verification code for manual verification.
+    1. **CheckAuthenticationStatusAuthenticationEvent**
+    2. **SendVerificationCodeToPhoneNumberAuthenticationEvent(String phoneNumber, Function(String verificationId) onCodeSent):** The event will call the Firebase function for phone number authentication and trigger the onCodeSent callback as soon as the code is sent.
+    3. **VerifyCodeAuthenticationEvent(String verificationId, String smsCode):** Send the verification code for manual verification.
 
     #### Events
 2. ### UserDatingProfileBloc
     #### Property
-    - [DatingProfile] profile
+    - [DatingProfile](#datingprofile) profile: Dating profile of the current user.
     #### States
+    1. InitializationUserDatingProfileState.
+    2. FetchingDatingProfileUserDatingProfileState.
+    3. FetchedDatingProfileUserDatingProfileState(DatingProfile profile).
+    4. DatingProfileFetchingFailedUserDatingProfileState(String? msg).
+    5. FetchingPublicDatingProfileUserDatingProfileState.
+    6. FetchedPublicDatingProfileUserDatingProfileState(DatingProfile profile).
+    7. PublicDatingProfileFetchingFailedUserDatingProfileState(String? msg).
     #### Events
-    1. UserDatingProfileEventCheckDatingProfileStatus.
+    1. **FetchDatingProfileUserDatingProfileEvent**: Fetch dating profile of the currently logged in user.
+    2. **FetchPublicDatingProfileUserDatingProfileEvent(int id)**: Fetch user's detail associated with the `id`. The event will be called when user wanted to view profile of other user.
+    3. **CreateDatingProfileUserDatingProfileEvent
 3. ### RotaryMatchingAndMatchedPairsBloc
 4. ### DatingRoomBloc
 5. ### SearchDatingRoomsBloc

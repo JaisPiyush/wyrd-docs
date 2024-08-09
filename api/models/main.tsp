@@ -83,7 +83,7 @@ model UpdateDatingRoomOrganizer {
 
 model InterestTag {
     @visibility("read")
-    @key pk: int32;
+    @key id: int32;
 
     @visibility("read", "create")
     tag: string;
@@ -125,7 +125,7 @@ enum AssessmentQuestionType {
  */
 model AssessmentQuestion {
     @visibility("read")
-    @key pk: int32;
+    @key id: int32;
 
     @visibility("read", "create", "update")
     question_type: AssessmentQuestionType;
@@ -157,7 +157,7 @@ model UpdateAssessmentQuestion {
 
 model DatingProfileAssessmentQuestion {
     @visibility("read")
-    @key pk: int64;
+    @key id: int64;
 
 
 
@@ -166,9 +166,6 @@ model DatingProfileAssessmentQuestion {
 
     @visibility("read", "create", "update")
     answer: string;
-
-    @visibility("read", "create", "update")
-    selected_option_index?: int32;
 
     @visibility("hidden")
     embedding: float64[];
@@ -203,7 +200,7 @@ enum MediaContentType {
  */
 model DatingProfileContentMedia<T extends MediaContentType> {
     @visibility("read")
-    @key pk: int32;
+    @key id: int32;
 
     @visibility("create")
     profile: string;
@@ -214,7 +211,7 @@ model DatingProfileContentMedia<T extends MediaContentType> {
     @visibility("read", "create",)
     url: string;
 
-    @visibility("read", "create",)
+    @visibility("read", "create", "update")
     caption?: string;
 
     @visibility("read", "create",)
@@ -247,7 +244,7 @@ model UpdateDatingProfileContentMedia {
 
 model UpdateMediaPositions {
     new_positions: {
-        pk: int32;
+        id: int32;
         position: int8;
     }[];
 }
@@ -259,7 +256,7 @@ enum TextPromptCategory {
 
 model TextPrompt {
     @visibility("read")
-    @key pk: int32;
+    @key id: int32;
 
     @visibility("read", "create", "update")
     question: string;
@@ -285,7 +282,7 @@ model UpdateTextPrompt {
 
 model DatingProfileTextPrompt {
     @visibility("read")
-    @key pk: int64;
+    @key id: int64;
 
     // @visibility("read", "create")
     // prompt: ReadTextPrompt;
@@ -306,7 +303,7 @@ model ReadDatingProfileTextPrompt {
 @withVisibility("create")
 model CreateDatingProfileTextPrompt {
     ...DatingProfileTextPrompt,
-    prompt: int32;
+    prompt_id: int32;
 }
 
 @withVisibility("update")
@@ -350,14 +347,13 @@ enum SubGendersInNonBinary {
 
 enum Gender {
     Man: "man",
-    Women: "women",
+    Women: "woman",
     Non_Binary: "non-binary"
 }
 
 enum DatingIntention {
     LongTerm: "lt",
     ShortTerm: "st",
-    Casual: "cs",
     LongTermOpenToShort: "ltst",
     ShortTermOpenToLong: "stlt",
 }
@@ -453,7 +449,7 @@ model DatingProfile {
 
     @visibility("read", "create", "update", "search_param", "unexpv")
     @doc("Locality name")
-    location: string;
+    locality: string;
 
     @visibility("read", "update", "unexpv")
     work?: string;
@@ -540,7 +536,7 @@ model DatingPreferencesDatingProfile {
 
 model BlockList {
     @visibility("read")
-    @key pk: string;
+    @key id: string;
 
     @visibility("read", "create")
     blocked_profile: MatchingPairDatingProfileInfo;
@@ -559,7 +555,7 @@ model ReadBlockList{
 
 @withVisibility("create")
 model CreateBlockList{
-    pk: string;
+    id: string;
 }
 
 
@@ -589,7 +585,7 @@ model ReadDatingProfileMatchingStatus {
  */
 model DatingRoom {
     @visibility("read", "search_param")
-    @key pk: int64;
+    @key id: int64;
 
 
     @visibility("detail_read")
@@ -738,18 +734,18 @@ model ArchivedMatchingPool {
     ...MatchingPool,
 
     @visibility("read")
-    @key pk: int64;
+    @key id: int64;
 }
 
 model MatchingPairDatingProfileInfo {
     avatar: string;
     name: string;
-    pk: string;
+    id: string;
 }
 
 
 model MatchingPair {
-    @key pk: string;
+    @key id: string;
     pairing_type: "rp" | "dr";
 
     profile_1: MatchingPairDatingProfileInfo;
@@ -793,7 +789,7 @@ enum MatchingPairProfileActivityType {
 
 model MatchingPairProfileActivity {
     @visibility("read")
-    @key pk: int64;
+    @key id: int64;
 
     @visibility("read")
     pair: int64;
@@ -898,7 +894,7 @@ model CreateMatchingPairProfileActivity {
 //     // Transfemine: "trans-femine",
 //     Transgender: "transgender",
 //     TwoSpirit: "two-spirit",
-//     GenderFlupk "gender-fluid",
+//     GenderFluid "gender-fluid",
 //     GenderQuestioning: "gender-questioning",
 //     Genderqueer: "genderqueer",
 
@@ -957,7 +953,7 @@ model CreateMatchingPairProfileActivity {
 
 // model PromptQuestion {
 //     @visibility("read")
-//     pk string;
+//     id string;
 //     @visibility("read", "admin-create", "admin-update")
 //     prompt: string;
 //     @visibility("read", "admin-create", "admin-update")
@@ -1020,7 +1016,7 @@ model CreateMatchingPairProfileActivity {
 
 // model DatingProfileQuestionare {
 //     @visibility("read")
-//     pk int32;
+//     id int32;
 //     @visibility("read", "admin-create", "admin-update")
 //     question: string;
 //     @visibility("read", "admin-create", "admin-update")
@@ -1222,7 +1218,7 @@ model CreateMatchingPairProfileActivity {
 
 // model DatingRoom {
 //     @visibility("read", "join")
-//     pk string;
+//     id string;
 //     @visibility("read", "update")
 //     is_active: boolean;
 //     @visibility("read", "create", "update")

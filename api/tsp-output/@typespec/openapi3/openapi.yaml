@@ -151,31 +151,6 @@ paths:
               $ref: '#/components/schemas/CreateDatingProfile'
       security:
         - BearerAuth: []
-    patch:
-      operationId: DatingProfileAPIView_update
-      description: update the dating profile.
-      parameters: []
-      responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReadDatingProfile'
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-        '404':
-          description: The server cannot find the requested resource.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateDatingProfile'
-      security:
-        - BearerAuth: []
   /account/profile/assessment-question:
     get:
       operationId: DatingProfileAssessmentQuestionAPIView_list
@@ -234,20 +209,20 @@ paths:
               $ref: '#/components/schemas/CreateDatingProfileAssessmentQuestion'
       security:
         - BearerAuth: []
-  /account/profile/assessment-question/{pk}:
+  /account/profile/assessment-question/{id}:
     patch:
       operationId: DatingProfileAssessmentQuestionAPIView_update
       description: update answer of already answered question.
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
             type: integer
             format: int64
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
           content:
             application/json:
               schema:
@@ -374,8 +349,8 @@ paths:
       description: update the dating preferences of the dating profile
       parameters: []
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
           content:
             application/json:
               schema:
@@ -394,34 +369,6 @@ paths:
               $ref: '#/components/schemas/DatingPreferencesDatingProfileUpdate'
       security:
         - BearerAuth: []
-  /account/profile/interest-tags/{pk}:
-    get:
-      operationId: AccountAPI_read
-      description: fech all interest tags selected by the user
-      parameters:
-        - name: pk
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ReadInterestTag'
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-        '404':
-          description: The server cannot find the requested resource.
-      security:
-        - BearerAuth: []
   /account/profile/media:
     get:
       operationId: DatingProfileMediaAPIView_list
@@ -437,13 +384,13 @@ paths:
                 items:
                   type: object
                   required:
-                    - pk
+                    - id
                     - content_type
                     - url
                     - is_profile_picture
                     - position
                   properties:
-                    pk:
+                    id:
                       type: integer
                       format: int32
                     content_type:
@@ -491,13 +438,13 @@ paths:
               schema:
                 type: object
                 required:
-                  - pk
+                  - id
                   - content_type
                   - url
                   - is_profile_picture
                   - position
                 properties:
-                  pk:
+                  id:
                     type: integer
                     format: int32
                   content_type:
@@ -539,13 +486,14 @@ paths:
               $ref: '#/components/schemas/CreateDatingProfileContentMedia'
       security:
         - BearerAuth: []
-    patch:
+  /account/profile/media/update-positions:
+    put:
       operationId: DatingProfileMediaAPIView_updatePositions
       description: change positions of media. only for images & videos and only image can occupy index position 0.
       parameters: []
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
           content:
             application/json:
               schema:
@@ -553,13 +501,13 @@ paths:
                 items:
                   type: object
                   required:
-                    - pk
+                    - id
                     - content_type
                     - url
                     - is_profile_picture
                     - position
                   properties:
-                    pk:
+                    id:
                       type: integer
                       format: int32
                     content_type:
@@ -593,6 +541,8 @@ paths:
           description: The server could not understand the request due to invalid syntax.
         '401':
           description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
       requestBody:
         required: true
         content:
@@ -601,12 +551,12 @@ paths:
               $ref: '#/components/schemas/UpdateMediaPositions'
       security:
         - BearerAuth: []
-  /account/profile/media/{pk}:
+  /account/profile/media/{id}:
     delete:
       operationId: DatingProfileMediaAPIView_delete
       description: remove a media. Min 1 image is required.
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -624,40 +574,6 @@ paths:
       security:
         - BearerAuth: []
   /account/profile/text-prompt:
-    get:
-      operationId: DatingProfileTextPromptAPIView_list
-      description: fetch all text prompts
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  next:
-                    type: string
-                    nullable: true
-                    default: null
-                  previous:
-                    type: string
-                    nullable: true
-                    default: null
-                  results:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReadTextPrompt'
-                required:
-                  - next
-                  - previous
-                  - results
-        '400':
-          description: The server could not understand the request due to invalid syntax.
-        '401':
-          description: Access is unauthorized.
-      security:
-        - BearerAuth: []
     post:
       operationId: DatingProfileTextPromptAPIView_create
       description: create a dating profile text prompt by user with answer.
@@ -681,46 +597,54 @@ paths:
               $ref: '#/components/schemas/CreateDatingProfileTextPrompt'
       security:
         - BearerAuth: []
-  /account/profile/text-prompt/{pk}:
     get:
       operationId: DatingProfileTextPromptAPIView_read
       description: fetch all the dating profile text prompts.
-      parameters:
-        - name: pk
-          in: path
-          required: true
-          schema:
-            type: string
+      parameters: []
       responses:
         '200':
           description: The request has succeeded.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ReadDatingProfileTextPrompt'
+                type: object
+                properties:
+                  next:
+                    type: string
+                    nullable: true
+                    default: null
+                  previous:
+                    type: string
+                    nullable: true
+                    default: null
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReadDatingProfileTextPrompt'
+                required:
+                  - next
+                  - previous
+                  - results
         '400':
           description: The server could not understand the request due to invalid syntax.
         '401':
           description: Access is unauthorized.
-        '404':
-          description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
+  /account/profile/text-prompt/{id}:
     patch:
       operationId: DatingProfileTextPromptAPIView_update
       description: update answer of the text prompt.
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
             type: integer
             format: int64
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
           content:
             application/json:
               schema:
@@ -743,7 +667,7 @@ paths:
       operationId: DatingProfileTextPromptAPIView_delete
       description: remove a text prompt.
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -760,14 +684,14 @@ paths:
           description: The server cannot find the requested resource.
       security:
         - BearerAuth: []
-  /account/profile/{pk}:
+  /account/profile/{id}:
     get:
       operationId: DatingProfileAPIView_read
       description: |-
         Fetch the dating profile of another user.
         Based on whether the requested profile is exposed or not, Exposed or UnExposed dating profile will be returned.
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -787,6 +711,37 @@ paths:
           description: Access is unauthorized.
         '404':
           description: The server cannot find the requested resource.
+      security:
+        - BearerAuth: []
+    patch:
+      operationId: DatingProfileAPIView_update
+      description: update the dating profile.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadDatingProfile'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+        '401':
+          description: Access is unauthorized.
+        '404':
+          description: The server cannot find the requested resource.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDatingProfile'
       security:
         - BearerAuth: []
   /common/assessment-question:
@@ -1272,12 +1227,12 @@ paths:
               $ref: '#/components/schemas/CreateDatingRoom'
       security:
         - BearerAuth: []
-  /room/organizer/room/{pk}:
+  /room/organizer/room/{id}:
     get:
       operationId: DatingRoomOrganizer_read
       description: fetch a particular dating room with detailed information.
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1302,15 +1257,15 @@ paths:
       operationId: DatingRoomOrganizer_update
       description: update dating room fields.
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
             type: integer
             format: int64
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
           content:
             application/json:
               schema:
@@ -1364,12 +1319,12 @@ paths:
           description: Access is unauthorized.
       security:
         - BearerAuth: []
-  /room/{pk}:
+  /room/{id}:
     get:
       operationId: DatingRoomAPIView_read
       description: fetch detailed info about a particular dating room.
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1413,11 +1368,11 @@ paths:
               $ref: '#/components/schemas/CreateAssessmentQuestion'
       security:
         - BearerAuth: []
-  /superuser/assessment-question/{pk}:
+  /superuser/assessment-question/{id}:
     get:
       operationId: AssessmentQuestionAPIView_read
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1441,7 +1396,7 @@ paths:
     delete:
       operationId: AssessmentQuestionAPIView_delete
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1481,11 +1436,11 @@ paths:
               $ref: '#/components/schemas/CreateInterestTag'
       security:
         - BearerAuth: []
-  /superuser/interest-tag/{pk}:
+  /superuser/interest-tag/{id}:
     get:
       operationId: InterestTagAPIView_read
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1508,14 +1463,14 @@ paths:
     patch:
       operationId: InterestTagAPIView_update
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
             type: string
       responses:
-        '201':
-          description: The request has succeeded and a new resource has been created as a result.
+        '202':
+          description: The request has been accepted for processing, but processing has not yet completed.
           content:
             application/json:
               schema:
@@ -1537,7 +1492,7 @@ paths:
     delete:
       operationId: InterestTagAPIView_delete
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1609,11 +1564,11 @@ paths:
               $ref: '#/components/schemas/CreateDatingRoomOrganizer'
       security:
         - BearerAuth: []
-  /superuser/room/organizer/{pk}:
+  /superuser/room/organizer/{id}:
     get:
       operationId: DatingRoomOrganizerAPIView_read
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1636,7 +1591,7 @@ paths:
     delete:
       operationId: DatingRoomOrganizerAPIView_delete
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1675,11 +1630,11 @@ paths:
               $ref: '#/components/schemas/CreateTextPrompt'
       security:
         - BearerAuth: []
-  /superuser/text-prompt/{pk}:
+  /superuser/text-prompt/{id}:
     get:
       operationId: TextPromptAPIView_read
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1703,7 +1658,7 @@ paths:
     delete:
       operationId: TextPromptAPIView_delete
       parameters:
-        - name: pk
+        - name: id
           in: path
           required: true
           schema:
@@ -1755,9 +1710,9 @@ components:
     CreateBlockList:
       type: object
       required:
-        - pk
+        - id
       properties:
-        pk:
+        id:
           type: string
     CreateDatingProfile:
       type: object
@@ -1769,7 +1724,7 @@ components:
         - dating_intention
         - interest_tags
         - location_point
-        - location
+        - locality
       properties:
         name:
           type: string
@@ -1799,7 +1754,7 @@ components:
           maxItems: 8
         location_point:
           $ref: '#/components/schemas/GeoPoint'
-        location:
+        locality:
           type: string
           description: Locality name
     CreateDatingProfileAssessmentQuestion:
@@ -1993,7 +1948,6 @@ components:
       enum:
         - lt
         - st
-        - cs
         - ltst
         - stlt
     DatingPreferencesDatingProfile:
@@ -2001,7 +1955,7 @@ components:
       required:
         - dating_intention
         - location_point
-        - location
+        - locality
         - search_range
         - age_range
       properties:
@@ -2009,7 +1963,7 @@ components:
           $ref: '#/components/schemas/DatingIntention'
         location_point:
           $ref: '#/components/schemas/GeoPoint'
-        location:
+        locality:
           type: string
           description: Locality name
         search_range:
@@ -2025,7 +1979,7 @@ components:
           $ref: '#/components/schemas/DatingIntention'
         location_point:
           $ref: '#/components/schemas/GeoPointUpdate'
-        location:
+        locality:
           type: string
           description: Locality name
         search_range:
@@ -2085,7 +2039,7 @@ components:
     DetailReadDatingRoom:
       type: object
       required:
-        - pk
+        - id
         - owner
         - is_active
         - start_date
@@ -2101,7 +2055,7 @@ components:
         - participants_count
         - is_participant
       properties:
-        pk:
+        id:
           type: integer
           format: int64
         owner:
@@ -2179,7 +2133,7 @@ components:
         - medias
         - audios
         - prompts
-        - location
+        - locality
       properties:
         user:
           $ref: '#/components/schemas/User'
@@ -2213,13 +2167,13 @@ components:
           items:
             type: object
             required:
-              - pk
+              - id
               - content_type
               - url
               - is_profile_picture
               - position
             properties:
-              pk:
+              id:
                 type: integer
                 format: int32
               content_type:
@@ -2253,13 +2207,13 @@ components:
           items:
             type: object
             required:
-              - pk
+              - id
               - content_type
               - url
               - is_profile_picture
               - position
             properties:
-              pk:
+              id:
                 type: integer
                 format: int32
               content_type:
@@ -2290,7 +2244,7 @@ components:
           maxItems: 3
         sexuality:
           $ref: '#/components/schemas/Sexuality'
-        location:
+        locality:
           type: string
           description: Locality name
         work:
@@ -2312,7 +2266,7 @@ components:
       type: string
       enum:
         - man
-        - women
+        - woman
         - non-binary
     GeoPoint:
       type: object
@@ -2355,7 +2309,7 @@ components:
     MatchingPair:
       type: object
       required:
-        - pk
+        - id
         - pairing_type
         - profile_1
         - profile_2
@@ -2369,7 +2323,7 @@ components:
         - created_at
         - updated_at
       properties:
-        pk:
+        id:
           type: string
         pairing_type:
           type: string
@@ -2419,13 +2373,13 @@ components:
       required:
         - avatar
         - name
-        - pk
+        - id
       properties:
         avatar:
           type: string
         name:
           type: string
-        pk:
+        id:
           type: string
     MatchingPairProfileActivityType:
       type: string
@@ -2437,11 +2391,11 @@ components:
     ReadAssessmentQuestion:
       type: object
       required:
-        - pk
+        - id
         - question_type
         - question
       properties:
-        pk:
+        id:
           type: integer
           format: int32
         question_type:
@@ -2457,11 +2411,11 @@ components:
     ReadBlockList:
       type: object
       required:
-        - pk
+        - id
         - blocked_profile
         - created_at
       properties:
-        pk:
+        id:
           type: string
         blocked_profile:
           $ref: '#/components/schemas/MatchingPairDatingProfileInfo'
@@ -2485,7 +2439,7 @@ components:
         - is_active
         - is_in_relationship
         - profile_completion_score
-        - location
+        - locality
         - search_range
         - age_range
         - current_active_chats
@@ -2529,13 +2483,13 @@ components:
           items:
             type: object
             required:
-              - pk
+              - id
               - content_type
               - url
               - is_profile_picture
               - position
             properties:
-              pk:
+              id:
                 type: integer
                 format: int32
               content_type:
@@ -2569,13 +2523,13 @@ components:
           items:
             type: object
             required:
-              - pk
+              - id
               - content_type
               - url
               - is_profile_picture
               - position
             properties:
-              pk:
+              id:
                 type: integer
                 format: int32
               content_type:
@@ -2625,7 +2579,7 @@ components:
           default: 0
         sexuality:
           $ref: '#/components/schemas/Sexuality'
-        location:
+        locality:
           type: string
           description: Locality name
         work:
@@ -2670,11 +2624,11 @@ components:
     ReadDatingProfileAssessmentQuestion:
       type: object
       required:
-        - pk
+        - id
         - answer
         - question
       properties:
-        pk:
+        id:
           type: integer
           format: int64
         answer:
@@ -2717,11 +2671,11 @@ components:
     ReadDatingProfileTextPrompt:
       type: object
       required:
-        - pk
+        - id
         - answer
         - prompt
       properties:
-        pk:
+        id:
           type: integer
           format: int64
         answer:
@@ -2731,7 +2685,7 @@ components:
     ReadDatingRoom:
       type: object
       required:
-        - pk
+        - id
         - is_active
         - start_date
         - start_time
@@ -2744,7 +2698,7 @@ components:
         - participants_count
         - is_participant
       properties:
-        pk:
+        id:
           type: integer
           format: int64
         is_active:
@@ -2811,12 +2765,12 @@ components:
     ReadInterestTag:
       type: object
       required:
-        - pk
+        - id
         - tag
         - icon
         - category
       properties:
-        pk:
+        id:
           type: integer
           format: int32
         tag:
@@ -2828,13 +2782,13 @@ components:
     ReadMatchingPairProfileActivity:
       type: object
       required:
-        - pk
+        - id
         - pair
         - profile
         - activity
         - created_at
       properties:
-        pk:
+        id:
           type: integer
           format: int64
         pair:
@@ -2852,11 +2806,11 @@ components:
     ReadTextPrompt:
       type: object
       required:
-        - pk
+        - id
         - question
         - category
       properties:
-        pk:
+        id:
           type: integer
           format: int32
         question:
@@ -2933,7 +2887,7 @@ components:
         - interest_tags
         - audios
         - prompts
-        - location
+        - locality
       properties:
         user:
           $ref: '#/components/schemas/User'
@@ -2967,13 +2921,13 @@ components:
           items:
             type: object
             required:
-              - pk
+              - id
               - content_type
               - url
               - is_profile_picture
               - position
             properties:
-              pk:
+              id:
                 type: integer
                 format: int32
               content_type:
@@ -3004,7 +2958,7 @@ components:
           maxItems: 3
         sexuality:
           $ref: '#/components/schemas/Sexuality'
-        location:
+        locality:
           type: string
           description: Locality name
         work:
@@ -3058,7 +3012,7 @@ components:
           $ref: '#/components/schemas/Sexuality'
         location_point:
           $ref: '#/components/schemas/GeoPointUpdate'
-        location:
+        locality:
           type: string
           description: Locality name
         work:
@@ -3150,20 +3104,22 @@ components:
           type: string
     UpdateMediaPositions:
       type: object
+      required:
+        - new_positions
       properties:
         new_positions:
           type: array
           items:
             type: object
             properties:
-              pk:
+              id:
                 type: integer
                 format: int32
               position:
                 type: integer
                 format: int8
             required:
-              - pk
+              - id
               - position
     User:
       type: object

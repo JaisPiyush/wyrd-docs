@@ -14,9 +14,9 @@ namespace WyrdAPI.AccountAPI;
 // @doc("fetch all interest tags.")
 // op list is ListResources<ReadInterestTag[]>;
 
-@route("/profile/interest-tags")
-@doc("fech all interest tags selected by the user")
-op read is ReadResourceById<int32, ReadInterestTag[]>;
+// @route("/profile/interest-tags")
+// @doc("fech all interest tags selected by the user")
+// op read is ReadResourceById<int32, ReadInterestTag[]>;
 
 @route("/device/token")
 @doc("set FCM device token for notification")
@@ -27,14 +27,14 @@ op read is ReadResourceById<int32, ReadInterestTag[]>;
 
 @route("/profile/text-prompt/")
 interface DatingProfileTextPromptAPIView {
-    @doc("fetch all text prompts")
-    op list is CursorListResources<ReadTextPrompt[]>;
+    // @doc("fetch all text prompts")
+    // op list is CursorListResources<ReadTextPrompt[]>;
 
     @doc("create a dating profile text prompt by user with answer.")
     op create is CreateResource<CreateDatingProfileTextPrompt, ReadDatingProfileTextPrompt>;
 
     @doc("fetch all the dating profile text prompts.")
-    op read is ReadResourceById<string, ReadDatingProfileTextPrompt[]>;
+    op read is CursorListResources<ReadDatingProfileTextPrompt[]>;
 
     @doc("update answer of the text prompt.")
     op update is UpdateResourceById<int64, UpdateDatingProfileTextPrompt, ReadDatingProfileTextPrompt>;
@@ -54,10 +54,13 @@ interface DatingProfileMediaAPIView {
     // @doc("position of the media can be changed. Only for images & video.")
     // op read is ReadResourceById<int32, ReadDatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>>;
     
+    // op update is 
+
+    @route("update-positions/")
     @doc("change positions of media. only for images & videos and only image can occupy index position 0.")
-    @patch op updatePositions(
+    @put op updatePositions(
         @body body: UpdateMediaPositions
-    ): WriteResourceResponse<ReadDatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>[]>;
+    ): UpdateResourceResponse<ReadDatingProfileContentMedia<MediaContentType.Audio | MediaContentType.Image | MediaContentType.Image>[]>;
     
     @doc("remove a media. Min 1 image is required.")
     op delete is DeleteResourceById<int32>;
@@ -95,7 +98,7 @@ interface DatingProfileAPIView {
     op create is CreateResource<CreateDatingProfile, ReadDatingProfile>;
 
     @doc("update the dating profile.")
-    op update is UpdateResource<UpdateDatingProfile, ReadDatingProfile>;
+    op update is UpdateResourceById<int64, UpdateDatingProfile, ReadDatingProfile>;
 }
 
 @route("/profile/dating-preferences")
