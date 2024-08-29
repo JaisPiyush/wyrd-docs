@@ -1,0 +1,3152 @@
+openapi: 3.0.3
+info:
+  title: Wyrd API
+  version: 1.0.0
+  description: Wyrd OpenAPI document
+paths:
+  /account/auth/login/phone/:
+    post:
+      operationId: account_auth_login_phone_create
+      description: This endpoint takes authentication `idToken` from third-party authentication
+        platform and logins the user returning JWT token pair
+      summary: Obtain JWT token pair using third-party authentication platform idToken
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WyrdTokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WyrdTokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WyrdTokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WyrdTokenObtainPair'
+          description: ''
+  /account/auth/token/refresh/:
+    post:
+      operationId: account_auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /account/device/token/:
+    post:
+      operationId: account_device_token_create
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetDeviceCloudMessagingTokenModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SetDeviceCloudMessagingTokenModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SetDeviceCloudMessagingTokenModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetDeviceCloudMessagingTokenModel'
+          description: ''
+  /account/profile/:
+    get:
+      operationId: account_profile_list
+      description: "\n        This API is used to get the current user's dating profile.\n\
+        \        "
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatingProfileModelList'
+          description: ''
+    post:
+      operationId: account_profile_create
+      description: "\n        This API is used to create a new dating profile for\
+        \ the current user.\n        "
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatingProfileModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateDatingProfileModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateDatingProfileModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileModel'
+          description: ''
+  /account/profile/{id}/:
+    get:
+      operationId: account_profile_retrieve
+      description: "\n        This API is used to get another user's dating profile.\n\
+        \        "
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile.
+        required: true
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicReadDatingProfileModel'
+          description: ''
+    put:
+      operationId: account_profile_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingProfileModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingProfileModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingProfileModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileModel'
+          description: ''
+    patch:
+      operationId: account_profile_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileModel'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileModel'
+          description: ''
+    delete:
+      operationId: account_profile_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile.
+        required: true
+      tags:
+      - account
+      responses:
+        '204':
+          description: No response body
+  /account/profile/assessment-question/:
+    get:
+      operationId: account_profile_assessment_question_list
+      description: Get answered assessment questions of dating profile
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatingProfileAnsweredAssessmentQuestionList'
+          description: ''
+    post:
+      operationId: account_profile_assessment_question_create
+      description: Create answered assessment questions of dating profile
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+          description: ''
+  /account/profile/assessment-question/{id}/:
+    get:
+      operationId: account_profile_assessment_question_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile answered
+          assessment question.
+        required: true
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+          description: ''
+    put:
+      operationId: account_profile_assessment_question_update
+      description: Update answered assessment question of dating profile
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile answered
+          assessment question.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+          description: ''
+    patch:
+      operationId: account_profile_assessment_question_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile answered
+          assessment question.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileAnsweredAssessmentQuestion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileAnsweredAssessmentQuestion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileAnsweredAssessmentQuestion'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+          description: ''
+    delete:
+      operationId: account_profile_assessment_question_destroy
+      description: Delete answered assessment questions of dating profile
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile answered
+          assessment question.
+        required: true
+      tags:
+      - account
+      responses:
+        '204':
+          description: No response body
+  /account/profile/blocklist/:
+    get:
+      operationId: account_profile_blocklist_list
+      description: Get blocked profiles of dating profile
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfileBlockListModelList'
+          description: ''
+    post:
+      operationId: account_profile_blocklist_create
+      description: Create blocked profiles of dating profile
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProfileBlockListModel'
+          application/x-www-form-urlencoded:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProfileBlockListModel'
+          multipart/form-data:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProfileBlockListModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfileBlockListModelList'
+          description: ''
+  /account/profile/blocklist/{id}/:
+    get:
+      operationId: account_profile_blocklist_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this profile block list.
+        required: true
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileBlockListModel'
+          description: ''
+    put:
+      operationId: account_profile_blocklist_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this profile block list.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileBlockListModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProfileBlockListModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProfileBlockListModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileBlockListModel'
+          description: ''
+    patch:
+      operationId: account_profile_blocklist_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this profile block list.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileBlockListModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileBlockListModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileBlockListModel'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileBlockListModel'
+          description: ''
+    delete:
+      operationId: account_profile_blocklist_destroy
+      description: Delete blocked profiles of dating profile
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this profile block list.
+        required: true
+      tags:
+      - account
+      responses:
+        '204':
+          description: No response body
+  /account/profile/dating-preferences/:
+    get:
+      operationId: account_profile_dating_preferences_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatingProfileDatingPreferencesModelList'
+          description: ''
+    put:
+      operationId: account_profile_dating_preferences_update
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingProfileDatingPreferencesModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingProfileDatingPreferencesModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingProfileDatingPreferencesModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileDatingPreferencesModel'
+          description: ''
+    patch:
+      operationId: account_profile_dating_preferences_partial_update
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileDatingPreferencesModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileDatingPreferencesModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileDatingPreferencesModel'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileDatingPreferencesModel'
+          description: ''
+  /account/profile/media/:
+    get:
+      operationId: account_profile_media_list
+      description: Get all content media from dating profile
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatingProfileContentMediaModelList'
+          description: ''
+    post:
+      operationId: account_profile_media_create
+      description: Add new content media to dating profile
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingProfileContentMediaModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          description: ''
+  /account/profile/media/{id}/:
+    get:
+      operationId: account_profile_media_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile content
+          media.
+        required: true
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          description: ''
+    put:
+      operationId: account_profile_media_update
+      description: Update content media in dating profile
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile content
+          media.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingProfileContentMediaModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          description: ''
+    patch:
+      operationId: account_profile_media_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile content
+          media.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileContentMediaModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileContentMediaModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileContentMediaModel'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          description: ''
+    delete:
+      operationId: account_profile_media_destroy
+      description: Delete content media from dating profile
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile content
+          media.
+        required: true
+      tags:
+      - account
+      responses:
+        '204':
+          description: No response body
+  /account/profile/media/bulk-create/:
+    post:
+      operationId: account_profile_media_bulk_create_create
+      description: Bulk create content media in dating profile
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          application/x-www-form-urlencoded:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          multipart/form-data:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatingProfileContentMediaModelList'
+          description: ''
+  /account/profile/media/update-positions/:
+    patch:
+      operationId: account_profile_media_update_positions_partial_update
+      description: Update position of content media in dating profile
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DatingProfileContentMediaPositionChange'
+          application/x-www-form-urlencoded:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DatingProfileContentMediaPositionChange'
+          multipart/form-data:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DatingProfileContentMediaPositionChange'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          description: ''
+  /account/profile/text-prompt/:
+    get:
+      operationId: account_profile_text_prompt_list
+      description: Get all text-prompt with answer from dating profile
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatingProfileTextPromptModelList'
+          description: ''
+    post:
+      operationId: account_profile_text_prompt_create
+      description: Add new text-prompt with answer to dating profile
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingProfileTextPromptModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          description: ''
+  /account/profile/text-prompt/{id}/:
+    get:
+      operationId: account_profile_text_prompt_retrieve
+      description: Update existing text-prompt with answer to dating profile
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile text prompt.
+        required: true
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          description: ''
+    put:
+      operationId: account_profile_text_prompt_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile text prompt.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingProfileTextPromptModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          description: ''
+    patch:
+      operationId: account_profile_text_prompt_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile text prompt.
+        required: true
+      tags:
+      - account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileTextPromptModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileTextPromptModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingProfileTextPromptModel'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          description: ''
+    delete:
+      operationId: account_profile_text_prompt_destroy
+      description: Delete text-prompt with answer from dating profile
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating profile text prompt.
+        required: true
+      tags:
+      - account
+      responses:
+        '204':
+          description: No response body
+  /common/assessment-question/:
+    get:
+      operationId: common_assessment_question_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: question
+        schema:
+          type: string
+      - in: query
+        name: question_type
+        schema:
+          type: string
+          enum:
+          - mc
+          - sc
+          - txt
+        description: |-
+          * `sc` - Multiple Choice Single Select
+          * `mc` - Multiple Choice Multiple Select
+          * `txt` - Text Answer
+      tags:
+      - common
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAssessmentQuestionModelList'
+          description: ''
+  /common/interest-tag/:
+    get:
+      operationId: common_interest_tag_list
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: tag
+        schema:
+          type: string
+      tags:
+      - common
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInterestTagModelList'
+          description: ''
+  /common/text-prompt:
+    get:
+      operationId: common_text_prompt_list
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+          enum:
+          - abm
+          - dvb
+          - gpl
+          - mtp
+          - sfc
+          - syt
+          - wca
+        description: |-
+          * `abm` - About me
+          * `mtp` - My type
+          * `sfc` - Self care
+          * `wca` - We can chat about
+          * `gpl` - Getting personal
+          * `dvb` - Date vibes
+          * `syt` - Story time
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - common
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTextPromptModelList'
+          description: ''
+  /match/pair/:
+    get:
+      operationId: match_pair_list
+      description: This API endpoint returns a list of `MatchingPair` objects that
+        are associated with the authenticated user. The list is filtered based on
+        the authenticated user's profile and the active pairs only.
+      summary: List the matching pairs for the authenticated user.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - match
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMatchingPairModelList'
+          description: ''
+  /match/pair/{id}/send_message/:
+    post:
+      operationId: match_pair_send_message_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        description: A unique value identifying this matching pair.
+        required: true
+      tags:
+      - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchingPairModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MatchingPairModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MatchingPairModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchingPairModel'
+          description: ''
+  /match/pair/get_chat_token/:
+    get:
+      operationId: match_pair_get_chat_token_retrieve
+      tags:
+      - match
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchingPairModel'
+          description: ''
+  /match/status/:
+    get:
+      operationId: match_status_retrieve
+      description: Get the status of the matching pool for the current user.
+      tags:
+      - match
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileMatchingStatus'
+          description: ''
+  /room/:
+    get:
+      operationId: room_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: distance_range
+        schema:
+          type: number
+      - in: query
+        name: entry_code_type
+        schema:
+          type: string
+          enum:
+          - cc
+          - ucpu
+        description: |-
+          * `cc` - Common code
+          * `ucpu` - Unique code per user
+      - in: query
+        name: has_matching_online_started
+        schema:
+          type: boolean
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: is_participant
+        schema:
+          type: boolean
+      - in: query
+        name: location
+        schema:
+          type: string
+      - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: visibility
+        schema:
+          type: string
+          enum:
+          - private
+          - public
+        description: |-
+          * `public` - Public
+          * `private` - Private
+      tags:
+      - room
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicDatingRoomModelList'
+          description: ''
+  /room/{id}/:
+    get:
+      operationId: room_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating room.
+        required: true
+      tags:
+      - room
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicDatingRoomModel'
+          description: ''
+  /room/organizer/room/:
+    get:
+      operationId: room_organizer_room_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: entry_code_type
+        schema:
+          type: string
+          enum:
+          - cc
+          - ucpu
+        description: |-
+          * `cc` - Common code
+          * `ucpu` - Unique code per user
+      - in: query
+        name: has_matching_online_started
+        schema:
+          type: boolean
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: visibility
+        schema:
+          type: string
+          enum:
+          - private
+          - public
+        description: |-
+          * `public` - Public
+          * `private` - Private
+      tags:
+      - room
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatingRoomModelList'
+          description: ''
+    post:
+      operationId: room_organizer_room_create
+      tags:
+      - room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingRoomModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingRoomModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingRoomModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomModel'
+          description: ''
+  /room/organizer/room/{id}/:
+    get:
+      operationId: room_organizer_room_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating room.
+        required: true
+      tags:
+      - room
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomModel'
+          description: ''
+    put:
+      operationId: room_organizer_room_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating room.
+        required: true
+      tags:
+      - room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingRoomModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingRoomModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingRoomModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomModel'
+          description: ''
+    patch:
+      operationId: room_organizer_room_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating room.
+        required: true
+      tags:
+      - room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingRoomModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingRoomModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingRoomModel'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomModel'
+          description: ''
+    delete:
+      operationId: room_organizer_room_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating room.
+        required: true
+      tags:
+      - room
+      responses:
+        '204':
+          description: No response body
+  /room/organizer/room/{id}/regenerate-code/:
+    patch:
+      operationId: room_organizer_room_regenerate_code_partial_update
+      description: Regenerate code
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating room.
+        required: true
+      tags:
+      - room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingRoomModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingRoomModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDatingRoomModel'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomModel'
+          description: ''
+  /room/organizer/room/{room_pk}/participant/:
+    get:
+      operationId: room_organizer_room_participant_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+      - in: path
+        name: room_pk
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+      tags:
+      - room
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDatingRoomParticipantModelList'
+          description: ''
+    post:
+      operationId: room_organizer_room_participant_create
+      parameters:
+      - in: path
+        name: room_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingRoomParticipantModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingRoomParticipantModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingRoomParticipantModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomParticipantModel'
+          description: ''
+  /room/organizer/room/{room_pk}/participant/{id}/:
+    delete:
+      operationId: room_organizer_room_participant_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dating room participant.
+        required: true
+      - in: path
+        name: room_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - room
+      responses:
+        '204':
+          description: No response body
+  /room/organizer/room/{room_pk}/participant/bulk-invite/:
+    post:
+      operationId: room_organizer_room_participant_bulk_invite_create
+      parameters:
+      - in: path
+        name: room_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatingRoomParticipantModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DatingRoomParticipantModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DatingRoomParticipantModel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomParticipantModel'
+          description: ''
+  /room/organizer/room/{room_pk}/participant/stats/:
+    get:
+      operationId: room_organizer_room_participant_stats_retrieve
+      parameters:
+      - in: path
+        name: room_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - room
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatingRoomParticipantModel'
+          description: ''
+components:
+  schemas:
+    AssessmentQuestionModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question_type:
+          $ref: '#/components/schemas/QuestionTypeEnum'
+        question:
+          type: string
+        description:
+          type: string
+          nullable: true
+        options:
+          type: array
+          items:
+            type: string
+          nullable: true
+      required:
+      - id
+      - question
+    BlockedDatingProfileModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 70
+        phone_number:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+      - phone_number
+    CategoryEnum:
+      enum:
+      - abm
+      - mtp
+      - sfc
+      - wca
+      - gpl
+      - dvb
+      - syt
+      type: string
+      description: |-
+        * `abm` - About me
+        * `mtp` - My type
+        * `sfc` - Self care
+        * `wca` - We can chat about
+        * `gpl` - Getting personal
+        * `dvb` - Date vibes
+        * `syt` - Story time
+    ContentTypeEnum:
+      enum:
+      - image
+      - video
+      - audio
+      type: string
+      description: |-
+        * `image` - Image
+        * `video` - Video
+        * `audio` - Audio
+    CreateDatingProfileModel:
+      type: object
+      properties:
+        interest_tags:
+          type: array
+          items:
+            type: integer
+        name:
+          type: string
+          maxLength: 70
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        location_point:
+          type: string
+        locality:
+          type: string
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestedGendersEnum'
+      required:
+      - dob
+      - gender
+      - interest_tags
+      - interested_genders
+      - locality
+      - location_point
+      - name
+    DatingIntentionEnum:
+      enum:
+      - lt
+      - st
+      - ltst
+      - stlt
+      type: string
+      description: |-
+        * `lt` - Long Term
+        * `st` - Short Term
+        * `ltst` - Long term Open to short
+        * `stlt` - Short term Open to long
+    DatingProfileAnsweredAssessmentQuestion:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question:
+          allOf:
+          - $ref: '#/components/schemas/AssessmentQuestionModel'
+          readOnly: true
+        question_id:
+          type: integer
+          writeOnly: true
+        answer:
+          type: string
+      required:
+      - answer
+      - id
+      - question
+      - question_id
+    DatingProfileContentMediaModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        content_type:
+          $ref: '#/components/schemas/ContentTypeEnum'
+        url:
+          type: string
+        caption:
+          type: string
+          nullable: true
+        position:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        profile:
+          type: integer
+          readOnly: true
+      required:
+      - content_type
+      - created
+      - id
+      - position
+      - profile
+      - updated
+      - url
+    DatingProfileContentMediaPositionChange:
+      type: object
+      properties:
+        media:
+          type: integer
+        position:
+          type: integer
+      required:
+      - media
+      - position
+    DatingProfileDatingPreferencesModel:
+      type: object
+      properties:
+        locality:
+          type: string
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntentionEnum'
+        location_point:
+          type: string
+        search_range:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        min_datable_age:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        max_datable_age:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+      required:
+      - locality
+      - location_point
+    DatingProfileModel:
+      type: object
+      description: Adds nested create feature
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        interest_tags:
+          type: array
+          items:
+            type: integer
+        prompts:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          readOnly: true
+        age:
+          type: integer
+          readOnly: true
+        profile_image:
+          type: string
+          readOnly: true
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          readOnly: true
+        profile_completion_score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,1}(?:\.\d{0,3})?$
+          readOnly: true
+        min_profile_completion_score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,1}(?:\.\d{0,3})?$
+          readOnly: true
+        location_point:
+          type: string
+        phone_number:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 70
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        bio:
+          type: string
+          nullable: true
+        subgender:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SubgenderEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        show_gender_on_profile:
+          type: boolean
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestedGendersEnum'
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntentionEnum'
+        is_active:
+          type: boolean
+          readOnly: true
+        is_in_relationship:
+          type: boolean
+          readOnly: true
+        matching_quota:
+          type: integer
+          readOnly: true
+        sexuality:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SexualityEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        locality:
+          type: string
+        work:
+          type: string
+          nullable: true
+        job_title:
+          type: string
+          nullable: true
+        college:
+          type: string
+          nullable: true
+        education_level:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/EducationLevelEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        hometown:
+          type: string
+          nullable: true
+        search_range:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        min_datable_age:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        max_datable_age:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        personality_embedding_updated:
+          type: string
+          format: date-time
+          nullable: true
+        user:
+          type: integer
+          readOnly: true
+      required:
+      - age
+      - created
+      - dob
+      - gender
+      - id
+      - interest_tags
+      - interested_genders
+      - is_active
+      - is_in_relationship
+      - locality
+      - location_point
+      - matching_quota
+      - medias
+      - min_profile_completion_score
+      - name
+      - phone_number
+      - profile_completion_score
+      - profile_image
+      - prompts
+      - updated
+      - user
+    DatingProfileTextPromptModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        prompt:
+          allOf:
+          - $ref: '#/components/schemas/TextPromptModel'
+          readOnly: true
+        prompt_id:
+          type: integer
+          writeOnly: true
+        answer:
+          type: string
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - answer
+      - created
+      - id
+      - prompt
+      - prompt_id
+    DatingRoomModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        participants_count:
+          type: integer
+          readOnly: true
+        has_matching_online_started:
+          type: boolean
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        banner_url:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            type: string
+        terms_and_conditions:
+          type: array
+          items:
+            type: string
+        search_distance_range:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        location_point:
+          type: string
+          nullable: true
+        venue_name:
+          type: string
+          nullable: true
+        venue_address:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        end_time:
+          type: string
+          format: time
+          nullable: true
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+        entry_code_type:
+          $ref: '#/components/schemas/EntryCodeTypeEnum'
+        common_code:
+          type: string
+          nullable: true
+          maxLength: 20
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        owner:
+          type: integer
+        participants:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+      required:
+      - created
+      - description
+      - has_matching_online_started
+      - id
+      - name
+      - owner
+      - participants
+      - participants_count
+      - start_date
+      - start_time
+      - updated
+    DatingRoomParticipantModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        has_exited:
+          type: boolean
+          readOnly: true
+        code:
+          type: string
+          nullable: true
+          maxLength: 20
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        joined:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        exited:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        profile:
+          type: integer
+      required:
+      - created
+      - exited
+      - has_exited
+      - id
+      - joined
+      - profile
+    DeactivationReasonEnum:
+      enum:
+      - logout
+      - banned
+      type: string
+      description: |-
+        * `logout` - Logout
+        * `banned` - Banned
+    EducationLevelEnum:
+      enum:
+      - Secondary School
+      - Undergrad
+      - Postgrad
+      - Prefer not to say
+      type: string
+      description: |-
+        * `Secondary School` - Secondary School
+        * `Undergrad` - Undergrad
+        * `Postgrad` - Postgrad
+        * `Prefer not to say` - Prefer not to say
+    EntryCodeTypeEnum:
+      enum:
+      - cc
+      - ucpu
+      type: string
+      description: |-
+        * `cc` - Common code
+        * `ucpu` - Unique code per user
+    GenderEnum:
+      enum:
+      - man
+      - woman
+      - non-binary
+      type: string
+      description: |-
+        * `man` - Man
+        * `woman` - Woman
+        * `non-binary` - Non binary
+    InterestTagModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tag:
+          type: string
+          maxLength: 50
+        icon:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        category:
+          type: string
+          maxLength: 50
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - created
+      - id
+      - tag
+    InterestedGendersEnum:
+      enum:
+      - man
+      - woman
+      - non-binary
+      type: string
+      description: |-
+        * `man` - Man
+        * `woman` - Woman
+        * `non-binary` - Non binary
+    MatchingPairDatingProfile:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 70
+        id:
+          type: integer
+          readOnly: true
+        profile_image:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+      - profile_image
+    MatchingPairModel:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 25
+        profile_1:
+          allOf:
+          - $ref: '#/components/schemas/MatchingPairDatingProfile'
+          readOnly: true
+        profile_2:
+          allOf:
+          - $ref: '#/components/schemas/MatchingPairDatingProfile'
+          readOnly: true
+        is_profile_1_exposed:
+          type: boolean
+          readOnly: true
+        is_profile_2_exposed:
+          type: boolean
+          readOnly: true
+        is_in_relationship:
+          type: boolean
+          readOnly: true
+        has_established_connection:
+          type: boolean
+          readOnly: true
+        is_frozen:
+          type: boolean
+          readOnly: true
+        is_terminal_datetime_completed:
+          type: boolean
+          readOnly: true
+        pairing_type:
+          $ref: '#/components/schemas/PairingTypeEnum'
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        chat_extended:
+          type: string
+          format: date-time
+          nullable: true
+        dating_room:
+          type: integer
+          nullable: true
+      required:
+      - created
+      - has_established_connection
+      - id
+      - is_frozen
+      - is_in_relationship
+      - is_profile_1_exposed
+      - is_profile_2_exposed
+      - is_terminal_datetime_completed
+      - pairing_type
+      - profile_1
+      - profile_2
+      - updated
+    NullEnum:
+      enum:
+      - null
+    PaginatedAssessmentQuestionModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssessmentQuestionModel'
+    PaginatedDatingProfileAnsweredAssessmentQuestionList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileAnsweredAssessmentQuestion'
+    PaginatedDatingProfileContentMediaModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileContentMediaModel'
+    PaginatedDatingProfileDatingPreferencesModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileDatingPreferencesModel'
+    PaginatedDatingProfileModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileModel'
+    PaginatedDatingProfileTextPromptModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileTextPromptModel'
+    PaginatedDatingRoomModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingRoomModel'
+    PaginatedDatingRoomParticipantModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingRoomParticipantModel'
+    PaginatedInterestTagModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestTagModel'
+    PaginatedMatchingPairModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchingPairModel'
+    PaginatedProfileBlockListModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileBlockListModel'
+    PaginatedPublicDatingRoomModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicDatingRoomModel'
+    PaginatedTextPromptModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TextPromptModel'
+    PairingTypeEnum:
+      enum:
+      - rp
+      - dr
+      type: string
+      description: |-
+        * `rp` - Rotary matching Pool
+        * `dr` - Dating room Pool
+    PatchedDatingProfileAnsweredAssessmentQuestion:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question:
+          allOf:
+          - $ref: '#/components/schemas/AssessmentQuestionModel'
+          readOnly: true
+        question_id:
+          type: integer
+          writeOnly: true
+        answer:
+          type: string
+    PatchedDatingProfileContentMediaModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        content_type:
+          $ref: '#/components/schemas/ContentTypeEnum'
+        url:
+          type: string
+        caption:
+          type: string
+          nullable: true
+        position:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        profile:
+          type: integer
+          readOnly: true
+    PatchedDatingProfileDatingPreferencesModel:
+      type: object
+      properties:
+        locality:
+          type: string
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntentionEnum'
+        location_point:
+          type: string
+        search_range:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        min_datable_age:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        max_datable_age:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+    PatchedDatingProfileModel:
+      type: object
+      description: Adds nested create feature
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        interest_tags:
+          type: array
+          items:
+            type: integer
+        prompts:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          readOnly: true
+        age:
+          type: integer
+          readOnly: true
+        profile_image:
+          type: string
+          readOnly: true
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          readOnly: true
+        profile_completion_score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,1}(?:\.\d{0,3})?$
+          readOnly: true
+        min_profile_completion_score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,1}(?:\.\d{0,3})?$
+          readOnly: true
+        location_point:
+          type: string
+        phone_number:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 70
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        bio:
+          type: string
+          nullable: true
+        subgender:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SubgenderEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        show_gender_on_profile:
+          type: boolean
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestedGendersEnum'
+        dating_intention:
+          $ref: '#/components/schemas/DatingIntentionEnum'
+        is_active:
+          type: boolean
+          readOnly: true
+        is_in_relationship:
+          type: boolean
+          readOnly: true
+        matching_quota:
+          type: integer
+          readOnly: true
+        sexuality:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SexualityEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        locality:
+          type: string
+        work:
+          type: string
+          nullable: true
+        job_title:
+          type: string
+          nullable: true
+        college:
+          type: string
+          nullable: true
+        education_level:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/EducationLevelEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        hometown:
+          type: string
+          nullable: true
+        search_range:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        min_datable_age:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        max_datable_age:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        personality_embedding_updated:
+          type: string
+          format: date-time
+          nullable: true
+        user:
+          type: integer
+          readOnly: true
+    PatchedDatingProfileTextPromptModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        prompt:
+          allOf:
+          - $ref: '#/components/schemas/TextPromptModel'
+          readOnly: true
+        prompt_id:
+          type: integer
+          writeOnly: true
+        answer:
+          type: string
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedDatingRoomModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        participants_count:
+          type: integer
+          readOnly: true
+        has_matching_online_started:
+          type: boolean
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        banner_url:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            type: string
+        terms_and_conditions:
+          type: array
+          items:
+            type: string
+        search_distance_range:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        location_point:
+          type: string
+          nullable: true
+        venue_name:
+          type: string
+          nullable: true
+        venue_address:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        end_time:
+          type: string
+          format: time
+          nullable: true
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+        entry_code_type:
+          $ref: '#/components/schemas/EntryCodeTypeEnum'
+        common_code:
+          type: string
+          nullable: true
+          maxLength: 20
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        owner:
+          type: integer
+        participants:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+    PatchedProfileBlockListModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        blocked_profile:
+          allOf:
+          - $ref: '#/components/schemas/BlockedDatingProfileModel'
+          readOnly: true
+        username:
+          type: string
+          writeOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+    ProfileBlockListModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        blocked_profile:
+          allOf:
+          - $ref: '#/components/schemas/BlockedDatingProfileModel'
+          readOnly: true
+        username:
+          type: string
+          writeOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - blocked_profile
+      - created
+      - id
+      - username
+    ProfileMatchingStatus:
+      type: object
+      properties:
+        matching_quota:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        cool_down_expired:
+          type: string
+          format: date-time
+          nullable: true
+        deactivation_reason:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/DeactivationReasonEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        matches_found_after_previous_cool_down:
+          type: integer
+        is_matching_disabled:
+          type: boolean
+        is_cool_down_active:
+          type: boolean
+      required:
+      - is_cool_down_active
+      - is_matching_disabled
+      - matches_found_after_previous_cool_down
+    PublicDatingRoomModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        participants_count:
+          type: integer
+          readOnly: true
+        has_matching_online_started:
+          type: boolean
+          readOnly: true
+        is_participant:
+          type: boolean
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        banner_url:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            type: string
+        terms_and_conditions:
+          type: array
+          items:
+            type: string
+        location_point:
+          type: string
+          nullable: true
+        venue_name:
+          type: string
+          nullable: true
+        venue_address:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        end_time:
+          type: string
+          format: time
+          nullable: true
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+        entry_code_type:
+          $ref: '#/components/schemas/EntryCodeTypeEnum'
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        owner:
+          type: integer
+        participants:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+      required:
+      - created
+      - description
+      - has_matching_online_started
+      - id
+      - is_participant
+      - name
+      - owner
+      - participants
+      - participants_count
+      - start_date
+      - start_time
+      - updated
+    PublicReadDatingProfileModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        interest_tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestTagModel'
+          readOnly: true
+        prompts:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileTextPromptModel'
+          readOnly: true
+        age:
+          type: integer
+          readOnly: true
+        profile_image:
+          type: string
+          readOnly: true
+        audios:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatingProfileContentMediaModel'
+          readOnly: true
+        name:
+          type: string
+          maxLength: 70
+        dob:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        bio:
+          type: string
+          nullable: true
+        subgender:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SubgenderEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        show_gender_on_profile:
+          type: boolean
+        interested_genders:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestedGendersEnum'
+        is_active:
+          type: boolean
+        is_in_relationship:
+          type: boolean
+        sexuality:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SexualityEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        locality:
+          type: string
+        work:
+          type: string
+          nullable: true
+        job_title:
+          type: string
+          nullable: true
+        college:
+          type: string
+          nullable: true
+        education_level:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/EducationLevelEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        hometown:
+          type: string
+          nullable: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        personality_embedding_updated:
+          type: string
+          format: date-time
+          nullable: true
+        user:
+          type: integer
+      required:
+      - age
+      - audios
+      - created
+      - dob
+      - gender
+      - id
+      - interest_tags
+      - interested_genders
+      - locality
+      - name
+      - profile_image
+      - prompts
+      - updated
+      - user
+    QuestionTypeEnum:
+      enum:
+      - sc
+      - mc
+      - txt
+      type: string
+      description: |-
+        * `sc` - Multiple Choice Single Select
+        * `mc` - Multiple Choice Multiple Select
+        * `txt` - Text Answer
+    SetDeviceCloudMessagingTokenModel:
+      type: object
+      properties:
+        token:
+          type: string
+          description: FCM device token
+      required:
+      - token
+    SexualityEnum:
+      enum:
+      - Prefer not to say
+      - Straight
+      - Gay
+      - Lesbian
+      - Bisexual
+      - Allosexual
+      - Androsexual
+      - Asexual
+      - Autosexual
+      - Bicurious
+      - Demisexual
+      - Fluid
+      - Greysexual
+      - Gynesexual
+      - Monosexual
+      - Ominisexual
+      - Pansexual
+      - Polysexual
+      - Queer
+      - Questioning
+      - Skollosexual
+      - Spectrasexual
+      - Not listed
+      type: string
+      description: |-
+        * `Prefer not to say` - Prefer not to say
+        * `Straight` - Straight
+        * `Gay` - Gay
+        * `Lesbian` - Lesbian
+        * `Bisexual` - Bisexual
+        * `Allosexual` - Allosexual
+        * `Androsexual` - Androsexual
+        * `Asexual` - Asexual
+        * `Autosexual` - Autosexual
+        * `Bicurious` - Bicurious
+        * `Demisexual` - Demisexual
+        * `Fluid` - Fluid
+        * `Greysexual` - Greysexual
+        * `Gynesexual` - Gynesexual
+        * `Monosexual` - Monosexual
+        * `Ominisexual` - Ominisexual
+        * `Pansexual` - Pansexual
+        * `Polysexual` - Polysexual
+        * `Queer` - Queer
+        * `Questioning` - Questioning
+        * `Skollosexual` - Skollosexual
+        * `Spectrasexual` - Spectrasexual
+        * `Not listed` - Not list
+    SubgenderEnum:
+      enum:
+      - man
+      - demimale
+      - intersex-man
+      - trans-man
+      - transmasculine
+      - woman
+      - demifemale
+      - intersex-woman
+      - trans-woman
+      - trans-femine
+      - non-binary
+      - agender
+      - bigender
+      - gender-non-confirming
+      - gender-variant
+      - intersex
+      - neutrols
+      - pangender
+      - polygender
+      - transgender
+      - two-spirit
+      - gender-fluid
+      - gender-questioning
+      - gender-queer
+      type: string
+      description: |-
+        * `man` - Man
+        * `demimale` - Demimale
+        * `intersex-man` - Intersex man
+        * `trans-man` - Trans man
+        * `transmasculine` - Transmasculine
+        * `woman` - Woman
+        * `demifemale` - Demifemale
+        * `intersex-woman` - Intersex woman
+        * `trans-woman` - Trans woman
+        * `trans-femine` - Transfemine
+        * `non-binary` - Non binary
+        * `agender` - Agender
+        * `bigender` - Bigender
+        * `gender-non-confirming` - Gender Non conforming
+        * `gender-variant` - Gender variant
+        * `intersex` - Intersex
+        * `neutrols` - Neutrols
+        * `pangender` - Pangender
+        * `polygender` - Polygender
+        * `transgender` - Transgender
+        * `two-spirit` - Two spirit
+        * `gender-fluid` - Gender fluid
+        * `gender-questioning` - Gender questioning
+        * `gender-queer` - Gender queer
+    TextPromptModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question:
+          type: string
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+      required:
+      - category
+      - id
+      - question
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    VisibilityEnum:
+      enum:
+      - public
+      - private
+      type: string
+      description: |-
+        * `public` - Public
+        * `private` - Private
+    WyrdTokenObtainPair:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+      - token

@@ -10,6 +10,9 @@ The main highlight of the design documentation are:
 4. All custom written functionalities should be tested.
 5. Data source and repository should be separate. No repository should make direct network or db requests.
 
+### Note
+1. All time and datetime on server are in UTC timezone, they are needed to specifically converted to IST when receiving or sending data to server. Suggestion create a custom DateTime, Time class which handles this problem.
+
 ## Objectives
 The primary objective of this document is to develop a flutter dating app that allows users to:
 - Find a live date.
@@ -118,6 +121,7 @@ The primary objective of this document is to develop a flutter dating app that a
 
 
 
+
 ## Pages
 
 1. ### PhoneNumberInputPage
@@ -207,25 +211,111 @@ The primary objective of this document is to develop a flutter dating app that a
 
     #### Events
 2. ### UserDatingProfileBloc
+    #### Objectives
+    1. Fetch user dating profile.
+    2. Create user dating profile.
+    3. Updating user dating profile.
+    4. Set user dating preferences.
     #### Property
-    - [DatingProfile](#datingprofile) profile: Dating profile of the current user.
+    - [DatingProfile?](#datingprofile) profile
+    - `Map<String, List<String>>?` createDatingProfileFieldErrors: The property contains all the field errors returned by the server when trying to create dating profile. You must set it null before new creation request and again set it null after successful creation request.
+
     #### States
-    1. InitializationUserDatingProfileState.
-    2. FetchingDatingProfileUserDatingProfileState.
-    3. FetchedDatingProfileUserDatingProfileState(DatingProfile profile).
-    4. DatingProfileFetchingFailedUserDatingProfileState(String? msg).
-    5. FetchingPublicDatingProfileUserDatingProfileState.
-    6. FetchedPublicDatingProfileUserDatingProfileState(DatingProfile profile).
-    7. PublicDatingProfileFetchingFailedUserDatingProfileState(String? msg).
+    1. InitializedUserDatingProfileState
+    2. FetchingDatingProfileUserDatingProfileState
+    3. FetchedDatingProfileUserDatingProfileState(DatingProfile profile)
+    4. ErrorFetchingUserDatingProfileState
+    5. CreatingUserDatingProfileState
+    6. **ErrorCreatingUserDatingProfileState({Map<String, List<String>>? fieldErrors, String? detail})**: fieldErrors contains error by each input field. You have to take these errors and show them beneath each field.
+    7. CreatedDatingProfileState(DatingProfile profile, [List<[DatingProfileContentMedia](#datingprofilecontentmedia)> medias])
+    8. UpdatingDatingPreferencesUserDatingProfileState
+    9. ErrorUpdatingDatingPreferencesUserDatingProfileState({Map<String, List<String>>? fieldErrors, String? detail})
+    10. ShowDatingPreferencesUserDatingProfileState([DatingPreferences](#datingpreferences) datingPreferences)
+
     #### Events
-    1. **FetchDatingProfileUserDatingProfileEvent**: Fetch dating profile of the currently logged in user.
-    2. **FetchPublicDatingProfileUserDatingProfileEvent(int id)**: Fetch user's detail associated with the `id`. The event will be called when user wanted to view profile of other user.
-    3. **CreateDatingProfileUserDatingProfileEvent
+    1. FetchUserDatingProfileEvent
+    2. CreateUserDatingProfileEvent(DatingProfile profile, [List<[DatingProfileContentMedia](#datingprofilecontentmedia)> medias]): Create dating profile on server. The medias provided will be passed at it is to state.
+    3. UpdateDatingPreferencesUserDatingProfileEvent([DatingPreferences](#datingpreferences) datingPreferences)
+    4. SetDatingProfileContentMediasUserDatingProfileEvent(List<[DatingProfileContentMedia](#datingprofilecontentmedia)> medias)
+
+    #### Methods
+    1. `void setUpdatedDatingProfile(DatingProfile profile)`: Set new dating profile as property.
+    2. `void updateDatingProfileUsingDatingPreferences(DatingPreferences datingPreferences)`: Update the original dating profile by merging values from new dating preferences and then set the new dating profile value.
+    
+    
+3. ### ContentMediaBloc
+    This is a local bloc.
+    #### Objectives
+    1. Add/remove/update media in dating profile.
+
+    #### States
+    1. InitializedContentMediaState
+    5. AddingMediasContentMediaState
+    6. ErrorAddingMediasContentMediaState({Map<String, List<String>>? fieldErrors, String? detail})
+    7. AddedMediasContentMediaState(List<[DatingProfileContentMedia](#datingprofilecontentmedia)> medias)
+    8. UpdatingMediaContentMediaState
+    9. ErrorUpdateMediaContentMediaState({Map<String, List<String>>? fieldErrors, String? detail})
+    10. UpdatedMediaContentMediaState([DatingProfileContentMedia](#datingprofilecontentmedia) media)
+    11. UpdatingMediaPositionsContentMediaState
+    12. ErrorUpdatingMediaPositionsContentMediaState({Map<String, List<String>>? fieldErrors, String? detail})
+    13. UpdatedMediaPositionsContentMediaState(List<[DatingProfileContentMedia](#datingprofilecontentmedia)> medias)
+
+    #### Events
+    1. AddMediasContentMediaEvent(List<[DatingProfileContentMedia](#datingprofilecontentmedia)> medias)
+    2. UpdateMediaContentMediaEvent([DatingProfileContentMedia](#datingprofilecontentmedia) media)
+    3. UpdateMediaPositionsContentMediaEvent(List<[DatingProfileContentMediaPositionUpdate](#datingprofilecontentmediapositionupdate)> newPositions)
+
+    #### Methods
+    1. `Future<List<DatingProfileContentMedia>> addContentMediasInProfile(List<DatingProfileContentMedia> medias)`
+
+4. ### TextPromptBloc
+    This is a local bloc.
+    #### Objectives
+    1. Add/Remove/Update text-prompt
+    2. Fetch all text prompt
+    3. Fetch all text prompt answered by current user
+
+    #### Properties
+    1. List<[TextPrompt](#textprompt)>? textPrompts;
+
+    #### States
+    1. InitializedTextPromptState.
+    2. FetchingPromptTextPromptState.
+    3. ErrorFetchingPromptTextPromptState([String? detail])
+    4. ShowPromptTextPromptState(List<[TextPrompt](#textprompt)> prompts)
+    5. FetchAnsweredPromptTextPromptState
+    6. FetchedAnsweredPromptTextPromptState(List<[DatingProfileTextPrompt](#datingprofiletextprompt)> prompt)
+    7. AddingPromptAnswerTextPromptState.
+    8. ErrorAddingPromptAnswerTextPromptState({Map<String, List<String>>? fieldErrors, String? detail})
+    9. AddedPromptAnswerTextPromptState(DatingProfileTextPrompt prompt)
+    10. UpdatingPromptAnswerTextPromptState
+    12. ErrorUpdatingPromptAnswerTextPromptState({Map<String, List<String>>? fieldErrors, String? detail})
+    13. UpdatedPromptAnswerTextPromptState(DatingProfileTextPrompt prompt)   
+    11. RemovingPromptAnswerTextPromptState
+    12. ErrorRemovingPromptAnswerTextPromptState([String? detail])
+    13. RemovedPromptAnswerTextPromptState(int promptId)
+
+    #### Events
+    1. FetchAllPromptTextPromptEvent
+    2. FetchAllAnsweredPromptTextPromptEvent
+    3. AddPromptAnswerTextPromptEvent([DatingProfileTextPrompt](#datingprofiletextprompt) prompt)
+    4. UpdatePromptAnswerTextPromptEvent([DatingProfileTextPrompt](#datingprofiletextprompt) prompt)
+    5. RemovePromptAnswerTextPromptEvent(int promptId)
+
+    #### Methods
+
 3. ### RotaryMatchingAndMatchedPairsBloc
-4. ### DatingRoomBloc
-5. ### SearchDatingRoomsBloc
+
+4. ### AssessmentQuestionBloc
+    #### Objectives
+    1. Fetch profile assessment questions.
+        - For common
+        - All un-answered questions by profile.
+        - All answered questions by profile.
+<!-- 4. ### DatingRoomBloc -->
+<!-- 5. ### SearchDatingRoomsBloc -->
 6. ### MatchedPairChatBloc
-7. ### UserBlocListBloc
+7. ### DatingProfileBlocListBloc
 
 
 
@@ -312,17 +402,17 @@ class CountdownTimerController {
 class AuthenticationRepository {
     // Make authorized request to backend for refreshing the jwt
     // Update the stored jwt in cookie and shared pref
-    // API: `POST: /account/auth/token/refresh`
+    // API: `POST: /account/auth/token/refresh/`
     Future<String> refreshBackendToken(String refreshToken);
 
     // idToken is unique identification token retrieved from firebase after authentication.
-    // API: `POST: /account/auth/login/phone`
+    // API: `POST: /account/auth/login/phone/`
     Future<BackendLoginResponse> loginOnBackend(String idToken);
 
     // API: `DELETE: /account/auth/logout`
     Future<void> logoutFromBackend();
 
-    // API: `POST: /account/device/token`
+    // API: `POST: /account/device/token/`
     Future<void> setDeviceToken(String deviceToken);
 }
 ```
@@ -332,8 +422,10 @@ class AuthenticationRepository {
 ```dart
 class DatingProfileRepository {
 
-    // API `GET: /account/profile`
+    // API `GET: /account/profile/`
     Future<DatingProfile> getMyDatingProfile();
+    // POST /account/profile/
+    Future<DatingProfile> createDatingProfile(DatingProfile)
 }
 ```
 
@@ -342,7 +434,7 @@ class DatingProfileRepository {
 ```dart
 class BackendUtilityRepository {
 
-    // API `GET: /account/interest-tags`
+    // API `GET: /common/interest-tags`
     Future<List<InterestTag>> getAllInterestTags();
 }
 ```
@@ -356,10 +448,54 @@ class BackendUtilityRepository {
     See response of `POST: /account/auth/login/phone`.
 3. ### DatingProfile
     See ReadDatingProfile schema.
+    #### Methods
+    ```dart
+    /// Factory method
+    DatingProfile fromDatingPreferences(DatingProfile profile, DatingPreferences datingPreferences) {
+        /// Create new instance of DatingProfile. Copy values from provided profile argument and updating dating preferences values.
+    }
+    ```
 4. ### InterestTag
-    See ReadInterestTag schema.
+    ```dart
+    class InterestTag {
+        final int id;
+        final String tag;
+        final String? icon;
+        final String category;
+        final DateTime created;
+    }
+    ```
+5. ### CreateDatingProfile
+    See schema from POST /account/profile/
 
+6. ### UpdateDatingProfile
+    See schema from PATCH /account/profile/
 
+7. ### DatingPreferences
+   See schema from GET /account/profile/dating-preferences/
+   #### Methods
+   ```dart
+   // Factory method
+   DatingPreferences fromDatingProfile(DatingProfile profile) {
+        // Create an instance by taking values from DatingProfile
+   }
+   ```
+
+6. ### DatingProfileContentMedia
+    See schema from GET /account/profile/media/
+
+7. ### DatingProfileContentMediaPositionUpdate
+    ```dart
+    class DatingProfileContentMediaPositionUpdate {
+        final int media;
+        final int position;
+
+    }
+    ```
+8. ### TextPrompt
+    See schema from GET /common/text-prompt/
+9. ### DatingProfileTextPrompt
+    See schema from GET /account/profile/text-prompt/
 
 
 ## Appendix
@@ -369,7 +505,7 @@ class BackendUtilityRepository {
 - pinput: OTP input
 - tutorial_coach_mark
 - persistent_bottom_nav_bar: fixed bottom bar
-- latlong2
+- location
 - bloc
 - flutter_bloc
 - flutter_osm_plugin
