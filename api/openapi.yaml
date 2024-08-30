@@ -364,6 +364,26 @@ paths:
       responses:
         '204':
           description: No response body
+  /account/profile/assessment-question/unanswered/:
+    get:
+      operationId: account_profile_assessment_question_unanswered_list
+      description: Get all non-answered assessment questions of dating profile
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - account
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAssessmentQuestionModelList'
+          description: ''
   /account/profile/blocklist/:
     get:
       operationId: account_profile_blocklist_list
@@ -762,6 +782,13 @@ paths:
     patch:
       operationId: account_profile_media_update_positions_partial_update
       description: Update position of content media in dating profile
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
       tags:
       - account
       requestBody:
@@ -787,7 +814,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DatingProfileContentMediaModel'
+                $ref: '#/components/schemas/PaginatedDatingProfileContentMediaModelList'
           description: ''
   /account/profile/text-prompt/:
     get:
@@ -989,7 +1016,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedInterestTagModelList'
           description: ''
-  /common/text-prompt:
+  /common/text-prompt/:
     get:
       operationId: common_text_prompt_list
       parameters:
@@ -1054,6 +1081,15 @@ paths:
   /match/pair/{id}/send_message/:
     post:
       operationId: match_pair_send_message_create
+      description: 'This API endpoint sends a message to a specific `MatchingPair`
+        object. The message is sent to the recipient associated with the `MatchingPair`
+        object. The message is also associated with the authenticated user. The message
+        is sent via the Sariska chat service. The message is sent as a text message
+        notification to the recipient. The recipient receives the message inside the
+        Sariska chat application. The message is stored in the `MatchingPairProfileActivity`
+        table. The message is associated with the `MatchingPairProfileActivityType.Sent_First_Message`
+        activity type.Currently, it only sends notification of message to the recipient. '
+      summary: Send a message to the matching pair.
       parameters:
       - in: path
         name: id
@@ -1067,24 +1103,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MatchingPairModel'
+              $ref: '#/components/schemas/TextMessageNotification'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/MatchingPairModel'
+              $ref: '#/components/schemas/TextMessageNotification'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/MatchingPairModel'
+              $ref: '#/components/schemas/TextMessageNotification'
         required: true
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchingPairModel'
-          description: ''
-  /match/pair/get_chat_token/:
+          description: No response body
+  /match/pair/activity/:
     get:
-      operationId: match_pair_get_chat_token_retrieve
+      operationId: match_pair_activity_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
       tags:
       - match
       responses:
@@ -1092,8 +1131,98 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchingPairModel'
+                $ref: '#/components/schemas/PaginatedMatchingPairProfileActivityModelList'
           description: ''
+    post:
+      operationId: match_pair_activity_create
+      tags:
+      - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchingPairProfileActivityModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MatchingPairProfileActivityModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MatchingPairProfileActivityModel'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchingPairProfileActivityModel'
+          description: ''
+  /match/pair/get_chat_token/:
+    get:
+      operationId: match_pair_get_chat_token_retrieve
+      description: This API endpoint generates an access token for the authenticated
+        user to utilize p2p chat sockets. The token is generated using the Sariska
+        chat service and is valid for a limited time. The token is used to authenticate
+        the user when they establish a chat connection. The generated token is sent
+        in the response as a JSON object with a single key-value pair where the key
+        is `token` and the value is the generated token.
+      summary: Generate a chat access token for the authenticated user.
+      tags:
+      - match
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+          description: ''
+  /match/pool/:
+    post:
+      operationId: match_pool_create
+      description: This API endpoint creates a new matching pool for the authenticated
+        user. The request body can contain pool's filter or dating room idThe response
+        will contain the serialized matching pool.
+      summary: Add user to matching pool
+      tags:
+      - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrDeleteMatchingPoolModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateOrDeleteMatchingPoolModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateOrDeleteMatchingPoolModel'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrDeleteMatchingPoolModel'
+          description: ''
+  /match/pool/{id}/:
+    delete:
+      operationId: match_pool_destroy
+      description: 'This API endpoint deletes an existing matching pool for the authenticated
+        user. '
+      summary: Remove user from matching pool
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this matching pool.
+        required: true
+      tags:
+      - match
+      responses:
+        '204':
+          description: No response body
   /match/status/:
     get:
       operationId: match_status_retrieve
@@ -1529,6 +1658,22 @@ paths:
           description: ''
 components:
   schemas:
+    ActivityEnum:
+      enum:
+      - expose_profile
+      - accept_relationship
+      - reject_relationship
+      - leave_chat
+      - sent_first_message
+      - extend_chat
+      type: string
+      description: |-
+        * `expose_profile` - Expose Profile
+        * `accept_relationship` - Accept Relationship
+        * `reject_relationship` - Reject Relationship
+        * `leave_chat` - Leave Chat
+        * `sent_first_message` - Sent First Message
+        * `extend_chat` - Extend Chat
     AssessmentQuestionModel:
       type: object
       properties:
@@ -1625,6 +1770,19 @@ components:
       - locality
       - location_point
       - name
+    CreateOrDeleteMatchingPoolModel:
+      type: object
+      properties:
+        dating_room:
+          type: integer
+          nullable: true
+        filter_kwargs:
+          nullable: true
+        id:
+          type: integer
+          readOnly: true
+      required:
+      - id
     DatingIntentionEnum:
       enum:
       - lt
@@ -2183,6 +2341,27 @@ components:
       - profile_1
       - profile_2
       - updated
+    MatchingPairProfileActivityModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        activity:
+          $ref: '#/components/schemas/ActivityEnum'
+        extra_kwargs:
+          nullable: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        pair:
+          type: string
+      required:
+      - activity
+      - created
+      - id
+      - pair
     NullEnum:
       enum:
       - null
@@ -2376,6 +2555,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MatchingPairModel'
+    PaginatedMatchingPairProfileActivityModelList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchingPairProfileActivityModel'
     PaginatedProfileBlockListModelList:
       type: object
       required:
@@ -2792,10 +2990,13 @@ components:
           type: boolean
         is_cool_down_active:
           type: boolean
+        rotary_pool_id:
+          type: integer
       required:
       - is_cool_down_active
       - is_matching_disabled
       - matches_found_after_previous_cool_down
+      - rotary_pool_id
     PublicDatingRoomModel:
       type: object
       properties:
@@ -3109,6 +3310,25 @@ components:
         * `gender-fluid` - Gender fluid
         * `gender-questioning` - Gender questioning
         * `gender-queer` - Gender queer
+    TextMessageNotification:
+      type: object
+      properties:
+        message_id:
+          type: string
+        pair_id:
+          type: string
+        sender_avatar_url:
+          type: string
+        name:
+          type: string
+        text:
+          type: string
+      required:
+      - message_id
+      - name
+      - pair_id
+      - sender_avatar_url
+      - text
     TextPromptModel:
       type: object
       properties:

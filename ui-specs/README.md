@@ -177,7 +177,10 @@ The primary objective of this document is to develop a flutter dating app that a
 
 
 ## Widgets
-
+1. ### PairChatWidget
+    * It's a stateful widget, accepts [MatchedPairChatHeader](#matchedpairchatheader) and build the entire chat screen.
+    * MatchedPairChatHeader is referenced as model here, but Combined with MatchedPairChatHeaderOperator it can also send messages and update user presence, update typing status and others.
+    * Based on MatchedPairActivity the screen should be able to freeze and take inputs from user. Although this will be managed by MatchedPairActivityBloc.
 
 ## Bloc
 
@@ -219,6 +222,7 @@ The primary objective of this document is to develop a flutter dating app that a
     #### Property
     - [DatingProfile?](#datingprofile) profile
     - `Map<String, List<String>>?` createDatingProfileFieldErrors: The property contains all the field errors returned by the server when trying to create dating profile. You must set it null before new creation request and again set it null after successful creation request.
+    - `Map<int, DatingProfile>` cachedDatingProfiles: These are cached profiles. Children ProfileDisplayBloc will use this property.
 
     #### States
     1. InitializedUserDatingProfileState
@@ -241,6 +245,9 @@ The primary objective of this document is to develop a flutter dating app that a
     #### Methods
     1. `void setUpdatedDatingProfile(DatingProfile profile)`: Set new dating profile as property.
     2. `void updateDatingProfileUsingDatingPreferences(DatingPreferences datingPreferences)`: Update the original dating profile by merging values from new dating preferences and then set the new dating profile value.
+    3. `void cacheDatingProfile(DatingProfile)`: add DatingProfile to cachedDatingProfiles
+    4. `void removeDatingProfileFromCache(int profileId)`
+    5. `DatingProfile? getDatingProfileFromCache(int profileId)`
     
     
 3. ### ContentMediaBloc
@@ -304,18 +311,114 @@ The primary objective of this document is to develop a flutter dating app that a
 
     #### Methods
 
-3. ### RotaryMatchingAndMatchedPairsBloc
+
 
 4. ### AssessmentQuestionBloc
     #### Objectives
-    1. Fetch profile assessment questions.
-        - For common
-        - All un-answered questions by profile.
-        - All answered questions by profile.
+    1. Fetch all assessment question
+    2. Fetch answered assessment question
+    3. Answer assessment question
+    4. Update assessment question answer
+
+    #### Properties
+    - List<[DatingProfileAssessmentQuestion](#assessmentquestion)> unAnsweredAssessmentQuestions: Plain assessment questions are transformed into DatingProfileAssessmentQuestions. The read property will only return un-answered questions
+    #### States
+    1. InitializedAssessmentQuestionEvent
+    2. FetchingAssessmentQuestionState
+    3. ErrorFetchingAssessmentQuestionState([String? detail])
+    4. FetchedAllAnsweredAssessmentQuestionState([DatingProfileAssessmentQuestion](#datingprofileassessmentquestion))
+    5. FetchedAllUnAnsweredAssessmentQuestionState([AssessmentQuestion](#assessmentquestion))
+    6. ErrorAnsweringAssessmentQuestionState({Map<String, List<String>>? fieldErrors, String? detail})
+    7. ErrorUpdatingAnswerOfAssessmentQuestionState({Map<String, List<String>>? fieldErrors, String? detail})
+    8. CreatedAnswerAssessmentQuestionState([DatingProfileAssessmentQuestion](#datingprofileassessmentquestion))
+    9. UpdatedAnswerAssessmentQuestionState([DatingProfileAssessmentQuestion](#datingprofileassessmentquestion))
+
+    #### Events
+    1. FetchAllUnAnsweredAssessmentQuestionEvent
+    2. FetchAllAnsweredAssessmentQuestionEvent
+    3. AnswerAssessmentQuestionEvent([DatingProfileAssessmentQuestion](#datingprofileassessmentquestion))
+    4. UpdateAnswerOfAssessmentQuestionEvent([DatingProfileAssessmentQuestion](#datingprofileassessmentquestion))
+
 <!-- 4. ### DatingRoomBloc -->
 <!-- 5. ### SearchDatingRoomsBloc -->
-6. ### MatchedPairChatBloc
-7. ### DatingProfileBlocListBloc
+
+7. ### ProfileDisplayCubit
+    These is a small local cubit used for displaying profiles. It Works in accordance with UserDatingProfileBloc.
+    ```dart
+    class ProfileDisplayCubit extends Cubit<DatingProfile?> {
+        final UserDatingProfileBloc userDatingProfileBloc;
+        ProfileDisplayCubit({@required this.userDatingProfileBloc, @required DatingProfile profile}) {
+            // Run function for fetching the profile and show state accordingly
+        }
+    }
+    ```
+
+
+
+3. ### RotaryMatchingBloc
+    #### Objectives
+    1. Fetch current matching status of the user.
+    2. Join pool for matching
+
+    #### Properties
+    1. [RotaryMatchingStatus](#rotarymatchingstatus) currentMatchingStatus
+    #### States
+    1. InitializedRotaryMatchingState
+    2. FetchingMatchingStatusRotaryMatchingState
+    3. FetchedMatchingStatusRotaryMatchingState([RotaryMatchingStatus](#rotarymatchingstatus))
+    4. JoiningPoolRotaryMatchingState
+    5. JoinedPoolRotaryMatchingState
+
+    #### Events
+    1. FetchMatchingStatusRotaryMatchingEvent
+    2. JoinPoolRotaryMatchingEvent
+
+
+
+7. ### ProfileBlockListBloc
+
+6. ### MatchedPairsBloc
+
+    #### Objectives
+    1. Fetch chat service token.
+    2. Fetch all chat pairs with latest message and unread mark.
+    3. Create Phoenix sockets for each pair and bind listeners.
+    4. Provide way for listening Chat headers state change from outside the bloc.
+
+    #### Properties
+    - `Map<String, MatchedPairChatHeader>` chatHeaderRecord;    
+    #### States
+    1. **ShowAllMatchedPairState(String roomId, List<MatchedPairChatHeader> chatHeaders)**
+    2. FetchingAllChatPairsMatchedPairsState
+
+    #### Events
+    1. FetchChatServiceChatTokenMatchedPairsEvent
+    2. **FetchAllChatPairsMatchedPairsEvent**: 
+        1. Pull all matched chat pairs.
+        2. Create sockets for each non-existing pair record.
+        2. Pull archived messages of each new pair until latest stored message.
+        3. Store these new message in db.
+        4. Bind on message handler for each new socket.
+
+
+7. ### MatchedPairActivityBloc
+    #### Objectives
+    1. Fetch all activities of the pair
+    2. Create new activity on the pair
+    #### Properties
+    - [MatchedPairActivity?](#matchedpairactivity) latestActivity;
+    - List<[MatchedPairActivity](#matchedpairactivity)> activities;
+    #### States
+    1. InitializedMatchedPairActivityState(([MatchedPairActivity?](#matchedpairactivity)) latestActivity)
+    2. FetchingAllMatchedPairActivityState
+    3. FetchedAllMatchedPairActivityState[MatchedPairActivity](#matchedpairactivity) latestActivity, (List<[MatchedPairActivity](#matchedpairactivity)> activities)
+    4. CreatingMatchedPairActivityState
+    5. ErrorFetchingAllMatchedPairActivityState([String? detail])
+    6. ErrorCreatingMatchedPairActivity({Map<String, List<String>>? fieldErrors, String? detail})
+
+    #### Events
+    1. FetchAllMatchedPairActivityEvent
+    2. CreateMatchedPairActivityEvent([MatchedPairActivity](#matchedpairactivity))
 
 
 
@@ -393,6 +496,15 @@ class CountdownTimerController {
 
 }
 ```
+
+
+### ChatServiceColdStorage
+  Check [GPT Chat](https://chatgpt.com/share/769daa75-9823-4198-a5de-3499477a8cc5) for implementation idea.
+  #### Objectives & Features
+  1. Store chats of users
+  2. Provide query methods
+  3. Provides behavior based stream reaction for getting alert about commits in db.
+
 
 ## Repositories
 
@@ -496,7 +608,83 @@ class BackendUtilityRepository {
     See schema from GET /common/text-prompt/
 9. ### DatingProfileTextPrompt
     See schema from GET /account/profile/text-prompt/
+10. ### AssessmentQuestion
+    See schema from GET /common/assessment-question/
+11. ### DatingProfileAssessmentQuestion
+    See schema from GET /account/profile/assessment-question/
+12. ### RotaryMatchingStatus
+    See schema from GET /match/status/
+13. ### MatchedPair
+    See schema fom GET /match/pair/
+14. ### MatchedPairActivity
+    See schema from GET /match/pair/activity/
+15. ### MatchedPairChatHeader 
+    ```dart
+    class RepresentationalChatHeader {
+        final MatchedPair pair;
+        final PhoenixSocket socket;
+        final bool isOnline;
+        final String? latestMessage;
+        final bool hasUnreadMessages;
+        final int unreadMessagesCount;
 
+
+    }
+    class MatchedPairChatHeader extends RepresentationalChatHeader {
+        final PhoenixSocket socket;
+
+        // Streams and latest values which Chat widget will use for updating it's state
+    }
+    ```
+
+16. ### MessagePayload
+    ```dart
+    class MessageContent {}
+
+    class TextMessageContent extends MessageContent {
+        final String text;
+    }
+
+    class MediaMessageContent extends MessageContent {
+        // "image" | "video" | "audio"
+        final String contentType;
+        final String url;
+        final String? text;
+    }
+
+    class EmojiMessageContent extends MessageContent {
+        final String unicode;
+    }
+
+    class MessagePayload {
+        // "text" | "media" | "emoji"
+        final String type;
+        final String messageId;
+        final DateTime createdAt;
+        final MessageContent content;
+        // Id of the message for which the user has replied or sent reaction.
+        final String? targetMessageId;
+        final int authorId;
+
+    }
+    ```
+17. ### ChatMessageModel
+    ```dart
+    class ChatMessageModel {
+        final String messageId;
+        final String pairId;
+        final int authorId;
+        // Id of message on sariska server
+        final int remoteId;
+        final DateTime createdAt;
+        // "delivered" | "error" | "seen" | "sending" | "sent"
+        final String status;
+        // Only "text" | "media" message content will be stored as separate row.
+        final MessageContent content;
+        final String? targetMessageId;
+        final String? reactionUnicode;
+    }
+    ```
 
 ## Appendix
 
